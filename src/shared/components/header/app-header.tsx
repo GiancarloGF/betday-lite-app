@@ -1,7 +1,8 @@
 'use client';
 
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/components/ui/button';
+import Link from 'next/link';
 
 /**
  * AppHeader displays the top navigation bar.
@@ -34,8 +35,8 @@ export function AppHeader() {
               Salir
             </Button>
           ) : (
-            <Button onClick={() => signIn(undefined, { callbackUrl: '/' })}>
-              Ingresar
+            <Button asChild>
+              <Link href="/login?callbackUrl=/">Ingresar</Link>
             </Button>
           )}
         </div>

@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/shared/components/ui/*": ["./src/shared/components/ui/*"]
     }
   },
   "include": [
