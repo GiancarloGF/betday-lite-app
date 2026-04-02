@@ -1,5 +1,5 @@
 import type { Match } from '@/modules/matches/domain/match';
-import { MatchesList } from '@/modules/matches/presentation/matches-list';
+import { HomeMatchesSection } from '@/modules/matches/presentation/home-matches-section';
 import { AppShell } from '@/shared/components/layout/app-shell';
 import { env } from '@/shared/lib/env';
 import type { ApiSuccessResponse } from '@/shared/types/api';
@@ -23,7 +23,7 @@ export default async function HomePage() {
 
   return (
     <AppShell>
-      <section className="space-y-6">
+      <div className="space-y-6">
         <div className="space-y-2">
           <p className="text-brand text-sm font-medium tracking-wide uppercase">
             Match Timeline
@@ -37,8 +37,8 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <MatchesList matches={matches} />
-      </section>
+        <HomeMatchesSection matches={matches} />
+      </div>
     </AppShell>
   );
 }
