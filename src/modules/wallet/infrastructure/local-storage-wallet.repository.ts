@@ -1,3 +1,4 @@
+// Storage key for wallet persistence in localStorage
 const WALLET_STORAGE_KEY = 'betday:wallet';
 
 type WalletData = {

@@ -1,5 +1,6 @@
 import { Bet } from '../domain/bet';
 
+// Storage key for user-created bets in localStorage
 const USER_BETS_STORAGE_KEY = 'betday:user-bets';
 
 export class LocalStorageBetsRepository {
