@@ -1,16 +1,16 @@
-import type { NextAuthOptions } from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
+import type { NextAuthOptions, Session, User } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
-import type { Session, User } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+
 import { env } from '@/shared/lib/env';
 
 /**
  * NextAuth configuration.
  * Uses a mock credentials provider with demo user credentials.
  */
-export const authConfig: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
-    Credentials({
+    CredentialsProvider({
       name: 'Credentials',
       credentials: {
         email: {
@@ -22,6 +22,7 @@ export const authConfig: NextAuthOptions = {
           type: 'password',
         },
       },
+      // Validate credentials against the demo user credentials
       async authorize(credentials) {
         const email = credentials?.email;
         const password = credentials?.password;
@@ -62,7 +63,7 @@ export const authConfig: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.name = token.name;
-        session.user.email = token.email as string;
+        session.user.email = token.email;
       }
 
       return session;
