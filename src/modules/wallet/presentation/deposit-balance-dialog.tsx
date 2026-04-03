@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/shared/components/ui/button';
@@ -29,6 +29,8 @@ export function DepositBalanceDialog({
 }: DepositBalanceDialogProps) {
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const amountErrorId = useId();
 
   const depositToWallet = useWalletStore((state) => state.depositToWallet);
 
@@ -39,11 +41,13 @@ export function DepositBalanceDialog({
 
   function handleQuickAmountClick(value: number) {
     const nextValue = parsedAmount + value;
+    setErrorMessage(null);
     setAmount(nextValue.toString());
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setErrorMessage(null);
 
     try {
       const wallet = depositToWallet(parsedAmount);
@@ -54,10 +58,12 @@ export function DepositBalanceDialog({
       toast.success(`Saldo actualizado a S/ ${wallet.balance.toFixed(2)}`);
     } catch (error) {
       if (error instanceof AppError) {
+        setErrorMessage(error.message);
         toast.error(error.message);
         return;
       }
 
+      setErrorMessage('No se pudo actualizar el saldo');
       toast.error('No se pudo actualizar el saldo');
     }
   }
@@ -67,6 +73,7 @@ export function DepositBalanceDialog({
       <DialogTrigger asChild>
         <button
           type="button"
+          aria-label={`Abrir dialogo para agregar saldo. Saldo actual S/ ${currentBalance.toFixed(2)}`}
           className="bg-surface-muted text-foreground hover:bg-accent rounded-full border border-white px-4 py-2 text-sm font-semibold shadow-[0_10px_24px_-20px_rgba(15,23,42,0.45)] transition-colors"
         >
           S/ {currentBalance.toFixed(2)}
@@ -119,8 +126,20 @@ export function DepositBalanceDialog({
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
               placeholder="0.00"
+              aria-invalid={errorMessage !== null}
+              aria-describedby={errorMessage ? amountErrorId : undefined}
             />
           </div>
+
+          {errorMessage ? (
+            <p
+              id={amountErrorId}
+              className="text-danger text-sm"
+              aria-live="polite"
+            >
+              {errorMessage}
+            </p>
+          ) : null}
 
           <Button type="submit" className="w-full" size="lg">
             Confirmar depósito

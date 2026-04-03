@@ -5,6 +5,7 @@ import { format, parseISO } from 'date-fns';
 
 import type { Bet, BetPick, BetStatus } from '@/modules/bets/domain/bet';
 import type { Match } from '@/modules/matches/domain/match';
+import { BetNotFound } from '@/modules/bets/presentation/bet-not-found';
 import { useUserBetsStore } from '@/shared/stores/user-bets.store';
 import { Badge } from '@/shared/components/ui/badge';
 
@@ -49,7 +50,7 @@ export function BetDetailSection({
   }, [bet, matches]);
 
   if (!bet) {
-    return null;
+    return <BetNotFound />;
   }
 
   const placedAt = format(parseISO(bet.placedAt), 'dd/MM/yyyy HH:mm');

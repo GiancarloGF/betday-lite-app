@@ -25,6 +25,7 @@ export function MatchCard({ match, index }: { match: Match; index: number }) {
   const [isBetDialogOpen, setIsBetDialogOpen] = useState(false);
 
   const startTime = format(parseISO(match.startTime), 'HH:mm');
+  const matchLabel = `${match.homeTeam.name} vs ${match.awayTeam.name}`;
 
   function handlePickSelection(pick: BetPick) {
     if (status !== 'authenticated') {
@@ -87,6 +88,7 @@ export function MatchCard({ match, index }: { match: Match; index: number }) {
           <button
             type="button"
             onClick={() => handlePickSelection('HOME')}
+            aria-label={`Apostar por ${match.homeTeam.name} en ${matchLabel}. Cuota ${match.market.odds.home.toFixed(2)}`}
             className={cn(
               'motion-odds-button motion-pressable-surface border-border bg-surface focus-visible:ring-brand/20 rounded-[1rem] border px-3 py-2.5 text-left transition-colors focus-visible:ring-4 focus-visible:outline-none',
             )}
@@ -102,6 +104,7 @@ export function MatchCard({ match, index }: { match: Match; index: number }) {
           <button
             type="button"
             onClick={() => handlePickSelection('DRAW')}
+            aria-label={`Apostar por empate en ${matchLabel}. Cuota ${match.market.odds.draw.toFixed(2)}`}
             className={cn(
               'motion-odds-button motion-pressable-surface border-border bg-surface focus-visible:ring-brand/20 rounded-[1rem] border px-3 py-2.5 text-left transition-colors focus-visible:ring-4 focus-visible:outline-none',
             )}
@@ -117,6 +120,7 @@ export function MatchCard({ match, index }: { match: Match; index: number }) {
           <button
             type="button"
             onClick={() => handlePickSelection('AWAY')}
+            aria-label={`Apostar por ${match.awayTeam.name} en ${matchLabel}. Cuota ${match.market.odds.away.toFixed(2)}`}
             className={cn(
               'motion-odds-button motion-pressable-surface border-border bg-surface focus-visible:ring-brand/20 rounded-[1rem] border px-3 py-2.5 text-left transition-colors focus-visible:ring-4 focus-visible:outline-none',
             )}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -14,6 +14,7 @@ import { Input } from '@/shared/components/ui/input';
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const errorMessageId = useId();
 
   const callbackUrl = searchParams.get('callbackUrl') || '/';
 
@@ -68,6 +69,8 @@ export function LoginForm() {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           autoComplete="email"
+          aria-invalid={errorMessage !== null}
+          aria-describedby={errorMessage ? errorMessageId : undefined}
           required
         />
       </div>
@@ -87,12 +90,20 @@ export function LoginForm() {
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           autoComplete="current-password"
+          aria-invalid={errorMessage !== null}
+          aria-describedby={errorMessage ? errorMessageId : undefined}
           required
         />
       </div>
 
       {errorMessage ? (
-        <p className="text-danger text-sm">{errorMessage}</p>
+        <p
+          id={errorMessageId}
+          className="text-danger text-sm"
+          aria-live="polite"
+        >
+          {errorMessage}
+        </p>
       ) : null}
 
       <Button

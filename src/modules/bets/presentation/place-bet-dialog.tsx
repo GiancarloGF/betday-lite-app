@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { placeBet } from '@/modules/bets/application/place-bet.use-case';
@@ -48,6 +48,8 @@ export function PlaceBetDialog({
   const pulseTimeoutRef = useRef<number | null>(null);
   const [stake, setStake] = useState('');
   const [isReturnEmphasized, setIsReturnEmphasized] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const stakeErrorId = useId();
   const { wallet, refreshWallet } = useWalletStore();
   const addUserBet = useUserBetsStore((state) => state.addUserBet);
 
@@ -102,6 +104,7 @@ export function PlaceBetDialog({
   function handleOpenChange(nextOpen: boolean) {
     if (!nextOpen) {
       setIsReturnEmphasized(false);
+      setErrorMessage(null);
 
       if (pulseTimeoutRef.current !== null) {
         window.clearTimeout(pulseTimeoutRef.current);
@@ -114,6 +117,7 @@ export function PlaceBetDialog({
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setErrorMessage(null);
 
     try {
       const bet = await placeBet({
@@ -137,10 +141,12 @@ export function PlaceBetDialog({
       router.refresh();
     } catch (error) {
       if (error instanceof AppError) {
+        setErrorMessage(error.message);
         toast.error(error.message);
         return;
       }
 
+      setErrorMessage('No se pudo registrar la apuesta');
       toast.error('No se pudo registrar la apuesta');
     }
   }
@@ -212,13 +218,26 @@ export function PlaceBetDialog({
               onChange={(event) => {
                 const nextStake = event.target.value;
 
+                setErrorMessage(null);
                 setStake(nextStake);
                 triggerReturnEmphasis(nextStake);
               }}
               placeholder="Ingresa tu stake"
+              aria-invalid={errorMessage !== null}
+              aria-describedby={errorMessage ? stakeErrorId : undefined}
               required
             />
           </div>
+
+          {errorMessage ? (
+            <p
+              id={stakeErrorId}
+              className="text-danger text-sm"
+              aria-live="polite"
+            >
+              {errorMessage}
+            </p>
+          ) : null}
 
           <div
             className={cn(

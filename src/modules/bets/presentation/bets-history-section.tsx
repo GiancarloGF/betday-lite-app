@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 import type { Bet, BetPick, BetStatus } from '@/modules/bets/domain/bet';
 import { BetsEmptyState } from '@/modules/bets/presentation/bets-empty-state';
@@ -75,7 +74,6 @@ export function BetsHistorySection({
   seedBets,
   matches,
 }: BetsHistorySectionProps) {
-  const router = useRouter();
   const userBets = useUserBetsStore((state) => state.userBets);
   const [search, setSearch] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<BetStatus | 'ALL'>(
@@ -180,18 +178,7 @@ export function BetsHistorySection({
                 const placedAt = parseISO(bet.placedAt);
 
                 return (
-                  <TableRow
-                    key={bet.id}
-                    className="bg-card hover:bg-muted/20 cursor-pointer"
-                    tabIndex={0}
-                    onClick={() => router.push(`/bets/${bet.id}`)}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        router.push(`/bets/${bet.id}`);
-                      }
-                    }}
-                  >
+                  <TableRow key={bet.id} className="bg-card hover:bg-muted/20">
                     <TableCell>
                       <div className="flex flex-col gap-1">
                         <p className="text-foreground text-base font-medium">
@@ -250,7 +237,7 @@ export function BetsHistorySection({
                       >
                         <Link
                           href={`/bets/${bet.id}`}
-                          onClick={(event) => event.stopPropagation()}
+                          aria-label={`Ver detalle de la apuesta para ${match?.homeTeam.name ?? 'Equipo local'} vs ${match?.awayTeam.name ?? 'Equipo visitante'}`}
                         >
                           Ver detalle
                         </Link>

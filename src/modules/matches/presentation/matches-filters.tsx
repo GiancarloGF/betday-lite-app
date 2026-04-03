@@ -1,5 +1,7 @@
 'use client';
 
+import { useId } from 'react';
+
 import { formatMatchDateLabel } from '@/modules/matches/presentation/match-date.utils';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -50,18 +52,21 @@ export function MatchesFilters({
   onLeagueChange,
   onTeamChange,
 }: MatchesFiltersProps) {
-  function renderSearchField(inputClassName: string) {
+  const desktopSearchId = useId();
+  const mobileSearchId = useId();
+
+  function renderSearchField(inputClassName: string, inputId: string) {
     return (
       <div className="space-y-2">
         <label
-          htmlFor="matches-search"
+          htmlFor={inputId}
           className="text-foreground text-xs font-semibold tracking-[0.18em] uppercase"
         >
           Buscar
         </label>
 
         <Input
-          id="matches-search"
+          id={inputId}
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
           placeholder="Buscar por equipo o liga"
@@ -157,7 +162,7 @@ export function MatchesFilters({
     <div className="bg-card rounded-[1.6rem] border border-white/70 p-4 shadow-[0_22px_40px_-30px_rgba(15,23,42,0.24)]">
       <div className="space-y-2 lg:hidden">
         <label
-          htmlFor="matches-search"
+          htmlFor={mobileSearchId}
           className="text-foreground text-xs font-semibold tracking-[0.18em] uppercase"
         >
           Buscar
@@ -165,7 +170,7 @@ export function MatchesFilters({
 
         <div className="flex items-center gap-3">
           <Input
-            id="matches-search"
+            id={mobileSearchId}
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Buscar por equipo o liga"
@@ -200,7 +205,7 @@ export function MatchesFilters({
       </div>
 
       <div className="hidden lg:grid lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] lg:items-end lg:gap-3">
-        {renderSearchField('min-w-0 w-full')}
+        {renderSearchField('min-w-0 w-full', desktopSearchId)}
         {renderFilters()}
       </div>
     </div>
