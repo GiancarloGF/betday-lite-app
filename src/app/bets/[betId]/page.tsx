@@ -6,11 +6,20 @@ import { BetDetailSection } from '@/modules/bets/presentation/bet-detail-section
 import type { Match } from '@/modules/matches/domain/match';
 import { AppShell } from '@/shared/components/layout/app-shell';
 import { getBaseUrl } from '@/shared/lib/get-base-url';
+import { createPageMetadata } from '@/shared/lib/seo';
 import type { ApiSuccessResponse } from '@/shared/types/api';
+import type { Metadata } from 'next';
 
 type PageProps = {
   params: Promise<{ betId: string }>;
 };
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Detalle de apuesta',
+  description: 'Detalle privado de una apuesta realizada por el usuario.',
+  path: '/bets',
+  index: false,
+});
 
 async function getSeedBets(): Promise<Bet[]> {
   const baseUrl = await getBaseUrl();

@@ -4,8 +4,17 @@ import { BetsHistorySection } from '@/modules/bets/presentation/bets-history-sec
 import type { Match } from '@/modules/matches/domain/match';
 import { AppShell } from '@/shared/components/layout/app-shell';
 import { getBaseUrl } from '@/shared/lib/get-base-url';
+import { createPageMetadata } from '@/shared/lib/seo';
 import type { ApiSuccessResponse } from '@/shared/types/api';
+import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Mis apuestas',
+  description: 'Consulta tu historial y el estado de tus apuestas.',
+  path: '/profile',
+  index: false,
+});
 
 async function getSeedBets(): Promise<Bet[]> {
   const baseUrl = await getBaseUrl();

@@ -1,4 +1,13 @@
 import { LoginForm } from '@/modules/auth/presentation/login-form';
+import { createPageMetadata } from '@/shared/lib/seo';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Ingresar',
+  description: 'Accede con las credenciales demo para probar la aplicacion.',
+  path: '/login',
+  index: false,
+});
 
 /**
  * Dedicated sign-in page required for middleware redirects

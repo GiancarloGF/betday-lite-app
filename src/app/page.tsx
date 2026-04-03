@@ -1,7 +1,17 @@
 import { HomeMatchesContent } from '@/modules/matches/presentation/home-matches-content';
 import { MatchesListSkeleton } from '@/modules/matches/presentation/matches-list-skeleton';
 import { AppShell } from '@/shared/components/layout/app-shell';
+import { createPageMetadata } from '@/shared/lib/seo';
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Partidos del dia',
+  description:
+    'Explora los partidos disponibles y revisa las cuotas 1X2 de esta demo de apuestas deportivas.',
+  path: '/',
+  index: true,
+});
 
 export default async function HomePage() {
   return (
