@@ -4,7 +4,6 @@ import { BetsHistorySection } from '@/modules/bets/presentation/bets-history-sec
 import type { Match } from '@/modules/matches/domain/match';
 import { AppShell } from '@/shared/components/layout/app-shell';
 import { getBaseUrl } from '@/shared/lib/get-base-url';
-import { UserBetsHydrator } from '@/shared/providers/user-bets-hydrator';
 import type { ApiSuccessResponse } from '@/shared/types/api';
 import { getServerSession } from 'next-auth';
 
@@ -53,23 +52,20 @@ export default async function ProfilePage() {
   const [seedBets, matches] = await Promise.all([getSeedBets(), getMatches()]);
 
   return (
-    <>
-      <UserBetsHydrator />
-      <AppShell>
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <p className="text-brand text-sm font-medium tracking-wide uppercase">
-              Profile
-            </p>
-            <h1 className="text-foreground text-3xl font-bold">Mis apuestas</h1>
-            <p className="text-muted-foreground text-sm">
-              Revisa tu historial de apuestas y filtra por estado.
-            </p>
-          </div>
-
-          <BetsHistorySection seedBets={seedBets} matches={matches} />
+    <AppShell>
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <p className="text-brand text-sm font-medium tracking-wide uppercase">
+            Profile
+          </p>
+          <h1 className="text-foreground text-3xl font-bold">Mis apuestas</h1>
+          <p className="text-muted-foreground text-sm">
+            Revisa tu historial de apuestas y filtra por estado.
+          </p>
         </div>
-      </AppShell>
-    </>
+
+        <BetsHistorySection seedBets={seedBets} matches={matches} />
+      </div>
+    </AppShell>
   );
 }
