@@ -35,21 +35,21 @@ export function BetHistoryCard({ bet, match }: BetHistoryCardProps) {
   const placedAt = format(parseISO(bet.placedAt), 'dd/MM/yyyy HH:mm');
 
   return (
-    <article className="border-border bg-card rounded-2xl border p-5 shadow-sm">
+    <article className="border-border bg-card rounded-[1.7rem] border border-white/70 p-5 shadow-[0_24px_45px_-32px_rgba(15,23,42,0.28)]">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-3">
           <div>
-            <p className="text-brand text-sm font-medium tracking-wide uppercase">
+            <p className="text-brand text-[11px] font-semibold tracking-[0.2em] uppercase">
               {match?.league.name ?? 'Liga'}
             </p>
-            <h3 className="text-foreground mt-1 text-lg font-semibold">
+            <h3 className="text-foreground mt-1 text-xl font-semibold">
               {homeTeam} vs {awayTeam}
             </h3>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <div>
-              <p className="text-muted-foreground text-xs tracking-wide uppercase">
+            <div className="bg-muted/55 rounded-[1.1rem] p-3">
+              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
                 Selección
               </p>
               <p className="text-foreground mt-1 text-sm font-semibold">
@@ -57,8 +57,8 @@ export function BetHistoryCard({ bet, match }: BetHistoryCardProps) {
               </p>
             </div>
 
-            <div>
-              <p className="text-muted-foreground text-xs tracking-wide uppercase">
+            <div className="bg-muted/55 rounded-[1.1rem] p-3">
+              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
                 Cuota
               </p>
               <p className="text-foreground mt-1 text-sm font-semibold">
@@ -66,8 +66,8 @@ export function BetHistoryCard({ bet, match }: BetHistoryCardProps) {
               </p>
             </div>
 
-            <div>
-              <p className="text-muted-foreground text-xs tracking-wide uppercase">
+            <div className="bg-muted/55 rounded-[1.1rem] p-3">
+              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
                 Stake
               </p>
               <p className="text-foreground mt-1 text-sm font-semibold">
@@ -75,8 +75,8 @@ export function BetHistoryCard({ bet, match }: BetHistoryCardProps) {
               </p>
             </div>
 
-            <div>
-              <p className="text-muted-foreground text-xs tracking-wide uppercase">
+            <div className="bg-muted/55 rounded-[1.1rem] p-3">
+              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
                 Fecha
               </p>
               <p className="text-foreground mt-1 text-sm font-semibold">
@@ -86,8 +86,8 @@ export function BetHistoryCard({ bet, match }: BetHistoryCardProps) {
           </div>
 
           {bet.return !== null ? (
-            <div>
-              <p className="text-muted-foreground text-xs tracking-wide uppercase">
+            <div className="bg-muted/55 rounded-[1.1rem] p-3">
+              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
                 Retorno
               </p>
               <p className="text-foreground mt-1 text-sm font-semibold">
@@ -100,7 +100,7 @@ export function BetHistoryCard({ bet, match }: BetHistoryCardProps) {
         <div className="flex flex-col items-start gap-3 lg:items-end">
           <Badge variant={STATUS_VARIANTS[bet.status]}>{bet.status}</Badge>
 
-          <Button asChild variant="outline">
+          <Button asChild variant="outline" className="min-w-32">
             <Link href={`/bets/${bet.id}`}>Ver detalle</Link>
           </Button>
         </div>

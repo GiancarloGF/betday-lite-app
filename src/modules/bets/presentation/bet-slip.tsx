@@ -44,7 +44,7 @@ export function BetSlip({ matches }: BetSlipProps) {
   return (
     <Card className="space-y-4 p-4">
       <div>
-        <p className="text-muted-foreground text-xs uppercase">Bet Slip</p>
+        <p className="text-muted-foreground text-xs uppercase">Bet slip</p>
 
         <h3 className="text-sm font-semibold">
           {match?.homeTeam.name ?? 'Equipo'} vs{' '}
@@ -56,25 +56,76 @@ export function BetSlip({ matches }: BetSlipProps) {
         </p>
       </div>
 
-      <div className="flex justify-between text-sm">
-        <span>Stake</span>
-        <span className="font-medium">S/ {lastBet.stake.toFixed(2)}</span>
-      </div>
+      <div className="bg-card relative overflow-hidden rounded-[1.35rem]">
+        <div className="bg-brand absolute inset-y-0 left-0 w-2 rounded-r-full" />
 
-      <div className="flex justify-between text-sm">
-        <span>Cuota</span>
-        <span className="font-medium">{lastBet.odd.toFixed(2)}</span>
-      </div>
+        <div className="bg-muted/45 ml-4 space-y-4 rounded-[1.2rem] px-5 py-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h3 className="text-foreground truncate text-xl font-bold uppercase">
+                {match?.homeTeam.name ?? 'Equipo'}
+              </h3>
+              <p className="text-muted-foreground mt-2 text-sm font-semibold">
+                Resultado del partido (1X2)
+              </p>
+            </div>
 
-      <div className="flex justify-between text-sm">
-        <span>Retorno</span>
-        <span className="font-semibold text-green-600">
-          S/ {estimatedReturn.toFixed(2)}
-        </span>
-      </div>
+            <Badge variant="secondary">Pendiente</Badge>
+          </div>
 
-      <div className="flex justify-end">
-        <Badge variant="secondary">Última apuesta</Badge>
+          <div className="flex items-end justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-foreground text-lg leading-tight font-semibold">
+                {match?.homeTeam.name ?? 'Equipo'} vs{' '}
+                {match?.awayTeam.name ?? 'Equipo'}
+              </p>
+            </div>
+
+            <p className="text-foreground shrink-0 text-5xl leading-none font-bold">
+              {lastBet.odd.toFixed(2)}
+            </p>
+          </div>
+
+          <div className="bg-card/75 grid grid-cols-3 gap-3 rounded-[1rem] p-3 text-sm">
+            <div>
+              <p className="text-muted-foreground text-[11px] font-medium uppercase">
+                Seleccion
+              </p>
+              <p className="text-foreground mt-1 font-semibold">
+                {lastBet.pick === 'HOME'
+                  ? '1'
+                  : lastBet.pick === 'DRAW'
+                    ? 'X'
+                    : '2'}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-muted-foreground text-[11px] font-medium uppercase">
+                Cuota
+              </p>
+              <p className="text-foreground mt-1 font-semibold">
+                {lastBet.odd.toFixed(2)}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-muted-foreground text-[11px] font-medium uppercase">
+                Stake
+              </p>
+              <p className="text-foreground mt-1 font-semibold">
+                S/ {lastBet.stake.toFixed(2)}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">Retorno</span>
+            <span className="text-foreground font-semibold">
+              S/ {estimatedReturn.toFixed(2)}
+            </span>
+          </div>
+        </div>
       </div>
     </Card>
   );

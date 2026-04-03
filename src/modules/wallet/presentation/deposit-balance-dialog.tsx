@@ -67,19 +67,21 @@ export function DepositBalanceDialog({
       <DialogTrigger asChild>
         <button
           type="button"
-          className="bg-surface-muted text-foreground hover:bg-accent rounded-xl px-3 py-2 text-sm font-semibold transition-colors"
+          className="bg-surface-muted text-foreground hover:bg-accent rounded-full border border-white px-4 py-2 text-sm font-semibold shadow-[0_10px_24px_-20px_rgba(15,23,42,0.45)] transition-colors"
         >
           S/ {currentBalance.toFixed(2)}
         </button>
       </DialogTrigger>
 
-      <DialogContent className="w-[calc(100vw-2rem)] max-w-md rounded-2xl">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-md">
         <DialogHeader>
-          <DialogTitle>Agregar saldo</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">
+            Agregar saldo
+          </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="bg-surface-muted text-muted-foreground rounded-xl p-4 text-sm">
+          <div className="bg-surface-muted text-muted-foreground rounded-[1.4rem] border border-white/70 p-4 text-sm">
             Saldo actual:{' '}
             <span className="text-foreground font-semibold">
               S/ {currentBalance.toFixed(2)}
@@ -103,7 +105,7 @@ export function DepositBalanceDialog({
           <div className="space-y-2">
             <label
               htmlFor="deposit-amount"
-              className="text-foreground text-sm font-medium"
+              className="text-foreground text-xs font-semibold tracking-[0.18em] uppercase"
             >
               Monto
             </label>
@@ -120,7 +122,7 @@ export function DepositBalanceDialog({
             />
           </div>
 
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full" size="lg">
             Confirmar depósito
           </Button>
         </form>

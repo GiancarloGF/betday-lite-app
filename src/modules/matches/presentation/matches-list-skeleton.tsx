@@ -9,7 +9,7 @@ export function MatchesListSkeleton() {
       {Array.from({ length: 6 }).map((_, index) => (
         <article
           key={index}
-          className="border-border bg-card rounded-2xl border p-5 shadow-sm"
+          className="border-border bg-card rounded-[1.6rem] border p-5 shadow-[0_22px_40px_-30px_rgba(15,23,42,0.24)]"
         >
           <div className="mb-4 flex items-start justify-between gap-4">
             <div className="space-y-2">

@@ -27,19 +27,16 @@ export async function HomeMatchesContent() {
   const matches = await getMatches();
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-      {/* Main content */}
-      <div className="space-y-6">
+    <div className="grid gap-6 xl:h-full xl:min-h-0 xl:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="min-h-0 space-y-6 xl:h-full">
         <HomeMatchesSection matches={matches} />
 
-        {/* Sidebar in mobile/tablet */}
-        <div className="lg:hidden">
+        <div className="xl:hidden">
           <RightSidebar matches={matches} />
         </div>
       </div>
 
-      {/* Sidebar in desktop */}
-      <div className="hidden lg:block">
+      <div className="hidden xl:block">
         <RightSidebar matches={matches} />
       </div>
     </div>

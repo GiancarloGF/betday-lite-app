@@ -7,7 +7,7 @@ import { MatchCard } from './match-card';
 export function MatchesList({ matches }: { matches: Match[] }) {
   if (matches.length === 0) {
     return (
-      <div className="border-border bg-card rounded-2xl border border-dashed p-8 text-center">
+      <div className="border-border bg-card rounded-[1.6rem] border border-dashed p-10 text-center shadow-[0_22px_40px_-30px_rgba(15,23,42,0.24)]">
         <p className="text-foreground text-base font-medium">
           No hay partidos disponibles.
         </p>
@@ -19,7 +19,7 @@ export function MatchesList({ matches }: { matches: Match[] }) {
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-3">
       {matches.map((match) => (
         <MatchCard key={match.id} match={match} />
       ))}

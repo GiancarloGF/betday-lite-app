@@ -6,11 +6,14 @@ import { LoginForm } from '@/modules/auth/presentation/login-form';
  */
 export default function LoginPage() {
   return (
-    <main className="bg-background flex min-h-screen items-center justify-center px-4 py-10">
-      <div className="border-border bg-card w-full max-w-md rounded-2xl border p-8 shadow-sm">
-        <div className="mb-8 space-y-2 text-center">
-          <h1 className="text-brand text-3xl font-bold">BetDay Lite</h1>
-          <h2 className="text-foreground text-xl font-semibold">Ingresar</h2>
+    <main className="bg-background relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.98),transparent_28%),linear-gradient(180deg,rgba(15,23,42,0.04),rgba(15,23,42,0.12))]" />
+      <div className="bg-card relative w-full max-w-md rounded-[1.9rem] border border-white/80 p-8 shadow-[0_34px_90px_-42px_rgba(15,23,42,0.35)]">
+        <div className="mb-8 space-y-3 text-center">
+          <h1 className="text-brand text-4xl font-black tracking-tight">
+            BetDayLite
+          </h1>
+          <h2 className="text-foreground text-3xl font-semibold">Ingresar</h2>
           <p className="text-muted-foreground text-sm">
             Usa las credenciales demo para continuar.
           </p>
@@ -18,7 +21,7 @@ export default function LoginPage() {
 
         <LoginForm />
 
-        <div className="bg-surface-muted text-muted-foreground mt-6 rounded-xl p-4 text-sm">
+        <div className="bg-surface-muted text-muted-foreground mt-6 rounded-2xl border border-white/70 p-4 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
           <p className="text-foreground font-medium">Credenciales demo</p>
           <p>Email: demo@betday.com</p>
           <p>Password: BetDay123</p>

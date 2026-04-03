@@ -34,45 +34,56 @@ export function MatchesFilters({
   onTeamChange,
 }: MatchesFiltersProps) {
   return (
-    <div className="grid gap-3 md:grid-cols-[1.4fr_1fr_1fr]">
-      <Input
-        value={search}
-        onChange={(event) => onSearchChange(event.target.value)}
-        placeholder="Buscar por equipo o liga"
-        aria-label="Buscar partidos"
-      />
+    <div className="bg-card rounded-[1.6rem] border border-white/70 p-4 shadow-[0_22px_40px_-30px_rgba(15,23,42,0.24)]">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+        <Input
+          value={search}
+          onChange={(event) => onSearchChange(event.target.value)}
+          placeholder="Buscar por equipo o liga"
+          aria-label="Buscar partidos"
+          className="min-w-0 flex-1"
+        />
 
-      <Select value={selectedLeague} onValueChange={onLeagueChange}>
-        <SelectTrigger aria-label="Filtrar por liga">
-          <SelectValue placeholder="Todas las ligas" />
-        </SelectTrigger>
+        <div className="flex flex-col gap-3 lg:ml-auto lg:flex-row">
+          <Select value={selectedLeague} onValueChange={onLeagueChange}>
+            <SelectTrigger
+              aria-label="Filtrar por liga"
+              className="w-full lg:min-w-44"
+            >
+              <SelectValue placeholder="Todas las ligas" />
+            </SelectTrigger>
 
-        <SelectContent>
-          <SelectItem value="all">Todas las ligas</SelectItem>
+            <SelectContent>
+              <SelectItem value="all">Todas las ligas</SelectItem>
 
-          {leagues.map((league) => (
-            <SelectItem key={league} value={league}>
-              {league}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+              {leagues.map((league) => (
+                <SelectItem key={league} value={league}>
+                  {league}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-      <Select value={selectedTeam} onValueChange={onTeamChange}>
-        <SelectTrigger aria-label="Filtrar por equipo">
-          <SelectValue placeholder="Todos los equipos" />
-        </SelectTrigger>
+          <Select value={selectedTeam} onValueChange={onTeamChange}>
+            <SelectTrigger
+              aria-label="Filtrar por equipo"
+              className="w-full lg:min-w-52"
+            >
+              <SelectValue placeholder="Todos los equipos" />
+            </SelectTrigger>
 
-        <SelectContent>
-          <SelectItem value="all">Todos los equipos</SelectItem>
+            <SelectContent>
+              <SelectItem value="all">Todos los equipos</SelectItem>
 
-          {teams.map((team) => (
-            <SelectItem key={team} value={team}>
-              {team}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+              {teams.map((team) => (
+                <SelectItem key={team} value={team}>
+                  {team}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
     </div>
   );
 }

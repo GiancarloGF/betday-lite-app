@@ -37,34 +37,34 @@ export function MatchCard({ match }: { match: Match }) {
 
   return (
     <>
-      <article className="border-border bg-card rounded-2xl border p-5 shadow-sm transition-shadow hover:shadow-md">
-        <div className="mb-4 flex items-start justify-between gap-4">
+      <article className="border-border bg-card rounded-[1.5rem] border border-white/70 p-4 shadow-[0_20px_38px_-30px_rgba(15,23,42,0.24)] transition-all hover:-translate-y-0.5 hover:shadow-[0_26px_46px_-32px_rgba(15,23,42,0.28)]">
+        <div className="mb-3 flex items-start justify-between gap-3">
           <div>
-            <p className="text-brand text-xs font-medium tracking-wide uppercase">
+            <p className="text-brand text-[11px] font-semibold tracking-[0.2em] uppercase">
               {match.league.name}
             </p>
-            <p className="text-muted-foreground mt-1 text-sm">
+            <p className="text-muted-foreground mt-0.5 text-xs">
               {match.league.country}
             </p>
           </div>
 
-          <div className="bg-surface-muted text-foreground rounded-xl px-3 py-1 text-sm font-semibold">
+          <div className="bg-surface-muted text-foreground rounded-full border border-white px-3 py-1 text-xs font-semibold">
             {startTime}
           </div>
         </div>
 
-        <div className="mb-5 space-y-3">
-          <div className="flex items-center justify-between gap-4">
+        <div className="bg-muted/55 mb-3 rounded-[1.2rem] px-4 py-3.5">
+          <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-foreground text-base font-semibold">
                 {match.homeTeam.name}
               </p>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-xs">
                 {match.homeTeam.shortName}
               </p>
             </div>
 
-            <span className="text-muted-foreground text-sm font-medium">
+            <span className="text-muted-foreground text-xs font-semibold tracking-[0.24em] uppercase">
               vs
             </span>
 
@@ -72,7 +72,7 @@ export function MatchCard({ match }: { match: Match }) {
               <p className="text-foreground text-base font-semibold">
                 {match.awayTeam.name}
               </p>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-xs">
                 {match.awayTeam.shortName}
               </p>
             </div>
@@ -83,12 +83,12 @@ export function MatchCard({ match }: { match: Match }) {
           <button
             type="button"
             onClick={() => handlePickSelection('HOME')}
-            className="border-border bg-surface hover:border-brand hover:bg-surface-muted rounded-xl border px-3 py-3 text-left transition-colors"
+            className="border-border bg-surface hover:border-brand hover:bg-brand hover:[&_span]:text-brand-foreground rounded-[1rem] border px-3 py-2.5 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] transition-colors"
           >
-            <span className="text-muted-foreground block text-xs font-medium tracking-wide uppercase">
+            <span className="text-muted-foreground block text-[11px] font-semibold tracking-[0.18em] uppercase">
               {PICK_LABELS.HOME}
             </span>
-            <span className="text-foreground mt-1 block text-lg font-bold">
+            <span className="text-foreground mt-0.5 block text-lg font-bold">
               {match.market.odds.home.toFixed(2)}
             </span>
           </button>
@@ -96,12 +96,12 @@ export function MatchCard({ match }: { match: Match }) {
           <button
             type="button"
             onClick={() => handlePickSelection('DRAW')}
-            className="border-border bg-surface hover:border-brand hover:bg-surface-muted rounded-xl border px-3 py-3 text-left transition-colors"
+            className="border-border bg-surface hover:border-brand hover:bg-brand hover:[&_span]:text-brand-foreground rounded-[1rem] border px-3 py-2.5 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] transition-colors"
           >
-            <span className="text-muted-foreground block text-xs font-medium tracking-wide uppercase">
+            <span className="text-muted-foreground block text-[11px] font-semibold tracking-[0.18em] uppercase">
               {PICK_LABELS.DRAW}
             </span>
-            <span className="text-foreground mt-1 block text-lg font-bold">
+            <span className="text-foreground mt-0.5 block text-lg font-bold">
               {match.market.odds.draw.toFixed(2)}
             </span>
           </button>
@@ -109,12 +109,12 @@ export function MatchCard({ match }: { match: Match }) {
           <button
             type="button"
             onClick={() => handlePickSelection('AWAY')}
-            className="border-border bg-surface hover:border-brand hover:bg-surface-muted rounded-xl border px-3 py-3 text-left transition-colors"
+            className="border-border bg-surface hover:border-brand hover:bg-brand hover:[&_span]:text-brand-foreground rounded-[1rem] border px-3 py-2.5 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] transition-colors"
           >
-            <span className="text-muted-foreground block text-xs font-medium tracking-wide uppercase">
+            <span className="text-muted-foreground block text-[11px] font-semibold tracking-[0.18em] uppercase">
               {PICK_LABELS.AWAY}
             </span>
-            <span className="text-foreground mt-1 block text-lg font-bold">
+            <span className="text-foreground mt-0.5 block text-lg font-bold">
               {match.market.odds.away.toFixed(2)}
             </span>
           </button>

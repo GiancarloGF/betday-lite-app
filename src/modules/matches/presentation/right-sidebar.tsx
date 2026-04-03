@@ -1,7 +1,6 @@
 'use client';
 
 import type { Match } from '@/modules/matches/domain/match';
-import { BetSlip } from '@/modules/bets/presentation/bet-slip';
 import { PendingBetsPanel } from '@/modules/bets/presentation/pending-bets-panel';
 
 type RightSidebarProps = {
@@ -13,9 +12,8 @@ type RightSidebarProps = {
  */
 export function RightSidebar({ matches }: RightSidebarProps) {
   return (
-    <aside className="space-y-4">
+    <aside className="space-y-4 xl:sticky xl:top-24">
       <PendingBetsPanel matches={matches} />
-      {/*<BetSlip matches={matches} />*/}
     </aside>
   );
 }

@@ -61,7 +61,7 @@ export function HomeMatchesSection({ matches }: HomeMatchesSectionProps) {
   }, [matches, search, selectedLeague, selectedTeam]);
 
   return (
-    <section className="space-y-6">
+    <section className="flex min-h-0 flex-col gap-5 xl:h-full">
       <MatchesFilters
         search={search}
         selectedLeague={selectedLeague}
@@ -73,7 +73,9 @@ export function HomeMatchesSection({ matches }: HomeMatchesSectionProps) {
         onTeamChange={setSelectedTeam}
       />
 
-      <MatchesList matches={filteredMatches} />
+      <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+        <MatchesList matches={filteredMatches} />
+      </div>
     </section>
   );
 }

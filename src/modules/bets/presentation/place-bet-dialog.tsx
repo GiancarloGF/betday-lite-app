@@ -99,36 +99,46 @@ export function PlaceBetDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-2rem)] max-w-lg rounded-2xl">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-lg">
         <DialogHeader>
-          <DialogTitle>Confirmar apuesta</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">
+            Confirmar apuesta
+          </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="bg-surface-muted rounded-xl p-4">
-            <p className="text-muted-foreground text-sm font-medium">Partido</p>
+          <div className="bg-surface-muted rounded-[1.4rem] border border-white/70 p-4">
+            <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+              Partido
+            </p>
             <p className="text-foreground mt-1 text-base font-semibold">
               {match.homeTeam.name} vs {match.awayTeam.name}
             </p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="border-border rounded-xl border p-4">
-              <p className="text-muted-foreground text-sm">Selección</p>
+            <div className="border-border bg-muted/45 rounded-[1.25rem] border p-4">
+              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+                Selección
+              </p>
               <p className="text-foreground mt-1 text-lg font-bold">
                 {PICK_LABELS[pick]}
               </p>
             </div>
 
-            <div className="border-border rounded-xl border p-4">
-              <p className="text-muted-foreground text-sm">Cuota</p>
+            <div className="border-border bg-muted/45 rounded-[1.25rem] border p-4">
+              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+                Cuota
+              </p>
               <p className="text-foreground mt-1 text-lg font-bold">
                 {selectedOdd.toFixed(2)}
               </p>
             </div>
 
-            <div className="border-border rounded-xl border p-4">
-              <p className="text-muted-foreground text-sm">Saldo</p>
+            <div className="border-border bg-muted/45 rounded-[1.25rem] border p-4">
+              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+                Saldo
+              </p>
               <p className="text-foreground mt-1 text-lg font-bold">
                 S/ {wallet.balance.toFixed(2)}
               </p>
@@ -138,7 +148,7 @@ export function PlaceBetDialog({
           <div className="space-y-2">
             <label
               htmlFor="stake"
-              className="text-foreground text-sm font-medium"
+              className="text-foreground text-xs font-semibold tracking-[0.18em] uppercase"
             >
               Stake
             </label>
@@ -157,14 +167,16 @@ export function PlaceBetDialog({
             />
           </div>
 
-          <div className="bg-surface-muted rounded-xl p-4 text-sm">
-            <p className="text-muted-foreground">Retorno estimado</p>
+          <div className="bg-surface-muted rounded-[1.4rem] border border-white/70 p-4 text-sm">
+            <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+              Retorno estimado
+            </p>
             <p className="text-foreground mt-1 text-xl font-bold">
               S/ {estimatedReturn.toFixed(2)}
             </p>
           </div>
 
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full" size="lg">
             Confirmar apuesta
           </Button>
         </form>

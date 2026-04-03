@@ -1,9 +1,18 @@
 'use client';
 
 import { DepositBalanceDialog } from '@/modules/wallet/presentation/deposit-balance-dialog';
+import { Avatar, AvatarFallback } from '@/shared/components/ui/avatar';
 import { Button } from '@/shared/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/shared/components/ui/dropdown-menu';
 import { useWalletStore } from '@/shared/stores/wallet.store';
+import { LogOutIcon, UserIcon } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 /**
@@ -14,39 +23,90 @@ import Link from 'next/link';
  * - login/logout button depending on session state
  */
 export function AppHeader() {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
+  const pathname = usePathname();
   const wallet = useWalletStore((state) => state.wallet);
 
   const isAuthenticated = status === 'authenticated';
+  const userInitial = session?.user?.email?.charAt(0).toUpperCase() ?? 'U';
 
   return (
-    <header className="border-border bg-surface border-b">
-      <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3">
-        {/* Logo / Brand */}
-        <Link href="/" className="text-brand text-lg font-bold">
-          BetDay Lite
-        </Link>
+    <header className="border-border/80 bg-surface/95 sticky top-0 z-30 border-b backdrop-blur">
+      <div className="mx-auto flex min-h-18 max-w-[1380px] flex-wrap items-center justify-between gap-4 px-4 py-3 lg:px-6">
+        <div className="flex flex-wrap items-center gap-6">
+          <Link
+            href="/"
+            className="text-brand text-[1.7rem] leading-none font-black"
+          >
+            BetDayLite
+          </Link>
 
-        {/* Right section */}
+          <nav className="hidden items-center gap-6 md:flex">
+            <Link
+              href="/"
+              className={
+                pathname === '/'
+                  ? 'text-foreground text-sm font-semibold'
+                  : 'text-muted-foreground text-sm font-semibold'
+              }
+            >
+              Apuestas del dia
+            </Link>
+            <Link
+              href="/profile"
+              className={
+                pathname === '/profile'
+                  ? 'text-foreground text-sm font-semibold'
+                  : 'text-muted-foreground text-sm font-semibold'
+              }
+            >
+              Mis apuestas
+            </Link>
+          </nav>
+        </div>
+
         <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
           {isAuthenticated ? (
             <DepositBalanceDialog currentBalance={wallet.balance} />
-          ) : (
-            <div className="bg-surface-muted text-foreground rounded-xl px-3 py-2 text-sm font-semibold">
-              S/ 0.00
-            </div>
-          )}
+          ) : null}
 
-          {/* Auth button */}
           {isAuthenticated ? (
-            <Button
-              variant="destructive"
-              onClick={() => signOut({ callbackUrl: '/' })}
-            >
-              Salir
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Abrir menu de usuario"
+                  className="rounded-full transition-opacity hover:opacity-90"
+                >
+                  <Avatar
+                    size="lg"
+                    className="bg-surface-muted shadow-[0_10px_24px_-20px_rgba(15,23,42,0.45)]"
+                  >
+                    <AvatarFallback className="bg-surface-muted text-foreground font-semibold">
+                      {userInitial}
+                    </AvatarFallback>
+                  </Avatar>
+                </button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="cursor-pointer">
+                    <UserIcon />
+                    Mi perfil
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                >
+                  <LogOutIcon />
+                  Cerrar sesion
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
-            <Button asChild>
+            <Button asChild className="rounded-full px-5">
               <Link href="/login?callbackUrl=/">Ingresar</Link>
             </Button>
           )}

@@ -6,23 +6,25 @@ import { Suspense } from 'react';
 export default async function HomePage() {
   return (
     <AppShell>
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <p className="text-brand text-sm font-medium tracking-wide uppercase">
+      <div className="space-y-7 xl:flex xl:h-[calc(100vh-9.5rem)] xl:flex-col xl:space-y-6 xl:overflow-hidden">
+        <div className="space-y-3">
+          <p className="text-brand text-sm font-semibold tracking-[0.24em] uppercase">
             Match Timeline
           </p>
-          <h1 className="text-foreground text-3xl font-bold">
+          <h1 className="text-foreground text-4xl leading-tight font-semibold tracking-tight">
             Partidos del día
           </h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground max-w-2xl text-base">
             Explora los eventos más próximos y revisa las cuotas del mercado
             1X2.
           </p>
         </div>
 
-        <Suspense fallback={<MatchesListSkeleton />}>
-          <HomeMatchesContent />
-        </Suspense>
+        <div className="min-h-0 flex-1">
+          <Suspense fallback={<MatchesListSkeleton />}>
+            <HomeMatchesContent />
+          </Suspense>
+        </div>
       </div>
     </AppShell>
   );

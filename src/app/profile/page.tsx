@@ -53,13 +53,15 @@ export default async function ProfilePage() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <p className="text-brand text-sm font-medium tracking-wide uppercase">
+      <div className="space-y-7">
+        <div className="space-y-3">
+          <p className="text-brand text-sm font-semibold tracking-[0.24em] uppercase">
             Profile
           </p>
-          <h1 className="text-foreground text-3xl font-bold">Mis apuestas</h1>
-          <p className="text-muted-foreground text-sm">
+          <h1 className="text-foreground text-4xl leading-tight font-semibold tracking-tight">
+            Mis apuestas
+          </h1>
+          <p className="text-muted-foreground max-w-2xl text-base">
             Revisa tu historial de apuestas y filtra por estado.
           </p>
         </div>

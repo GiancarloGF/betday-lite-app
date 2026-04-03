@@ -54,7 +54,10 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="w-full space-y-5">
       <div className="space-y-2">
-        <label htmlFor="email" className="text-foreground text-sm font-medium">
+        <label
+          htmlFor="email"
+          className="text-foreground text-xs font-semibold tracking-[0.18em] uppercase"
+        >
           Email
         </label>
 
@@ -72,7 +75,7 @@ export function LoginForm() {
       <div className="space-y-2">
         <label
           htmlFor="password"
-          className="text-foreground text-sm font-medium"
+          className="text-foreground text-xs font-semibold tracking-[0.18em] uppercase"
         >
           Contraseña
         </label>
@@ -92,7 +95,12 @@ export function LoginForm() {
         <p className="text-danger text-sm">{errorMessage}</p>
       ) : null}
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
+      <Button
+        type="submit"
+        className="mt-2 w-full"
+        size="lg"
+        disabled={isSubmitting}
+      >
         {isSubmitting ? 'Ingresando...' : 'Ingresar'}
       </Button>
     </form>
