@@ -2,7 +2,7 @@
 
 import { DepositBalanceDialog } from '@/modules/wallet/presentation/deposit-balance-dialog';
 import { Button } from '@/shared/components/ui/button';
-import { useWallet } from '@/shared/hooks/use-wallet';
+import { useWalletStore } from '@/shared/stores/wallet.store';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 
@@ -14,8 +14,8 @@ import Link from 'next/link';
  * - login/logout button depending on session state
  */
 export function AppHeader() {
-  const { data: session, status } = useSession();
-  const { wallet, refreshWallet } = useWallet();
+  const { status } = useSession();
+  const wallet = useWalletStore((state) => state.wallet);
 
   const isAuthenticated = status === 'authenticated';
 
@@ -30,10 +30,7 @@ export function AppHeader() {
         {/* Right section */}
         <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
           {isAuthenticated ? (
-            <DepositBalanceDialog
-              currentBalance={wallet.balance}
-              onDeposited={refreshWallet}
-            />
+            <DepositBalanceDialog currentBalance={wallet.balance} />
           ) : (
             <div className="bg-surface-muted text-foreground rounded-xl px-3 py-2 text-sm font-semibold">
               S/ 0.00

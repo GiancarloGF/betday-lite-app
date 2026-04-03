@@ -1,14 +1,12 @@
 'use client';
 
-import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import type { Match } from '@/modules/matches/domain/match';
-import type { BetPick } from '@/modules/bets/domain/bet';
 import { placeBet } from '@/modules/bets/application/place-bet.use-case';
-import { AppError } from '@/shared/errors/app-error';
-import { useWallet } from '@/shared/hooks/use-wallet';
+import type { BetPick } from '@/modules/bets/domain/bet';
+import type { Match } from '@/modules/matches/domain/match';
 import { Button } from '@/shared/components/ui/button';
 import {
   Dialog,
@@ -17,6 +15,8 @@ import {
   DialogTitle,
 } from '@/shared/components/ui/dialog';
 import { Input } from '@/shared/components/ui/input';
+import { AppError } from '@/shared/errors/app-error';
+import { useWalletStore } from '@/shared/stores/wallet.store';
 
 type PlaceBetDialogProps = {
   match: Match;
@@ -43,9 +43,8 @@ export function PlaceBetDialog({
   onOpenChange,
 }: PlaceBetDialogProps) {
   const router = useRouter();
-  const { wallet, refreshWallet } = useWallet();
-
   const [stake, setStake] = useState('');
+  const { wallet, refreshWallet } = useWalletStore();
 
   const selectedOdd = useMemo(() => {
     if (pick === 'HOME') return match.market.odds.home;
@@ -73,8 +72,6 @@ export function PlaceBetDialog({
         stake: parsedStake,
         userId,
       });
-
-      window.dispatchEvent(new Event('wallet:updated'));
 
       refreshWallet();
 

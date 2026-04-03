@@ -1,8 +1,9 @@
 'use client';
 
-import { ReactNode } from 'react';
 import { SessionProvider } from 'next-auth/react';
+import { ReactNode } from 'react';
 import { Toaster } from 'sonner';
+import { WalletHydrator } from './wallet-hydrator';
 
 /**
  * Client-only wrapper for NextAuth SessionProvider.
@@ -11,6 +12,7 @@ import { Toaster } from 'sonner';
 export function AuthSessionProvider({ children }: { children: ReactNode }) {
   return (
     <SessionProvider>
+      <WalletHydrator />
       {children}
       <Toaster richColors position="top-right" />
     </SessionProvider>

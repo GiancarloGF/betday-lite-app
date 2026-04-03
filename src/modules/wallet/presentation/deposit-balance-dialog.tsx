@@ -3,8 +3,6 @@
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { depositBalance } from '@/modules/wallet/application/deposit-balance.use-case';
-import { AppError } from '@/shared/errors/app-error';
 import { Button } from '@/shared/components/ui/button';
 import {
   Dialog,
@@ -14,10 +12,11 @@ import {
   DialogTrigger,
 } from '@/shared/components/ui/dialog';
 import { Input } from '@/shared/components/ui/input';
+import { AppError } from '@/shared/errors/app-error';
+import { useWalletStore } from '@/shared/stores/wallet.store';
 
 type DepositBalanceDialogProps = {
   currentBalance: number;
-  onDeposited: () => void;
 };
 
 const QUICK_AMOUNTS = [20, 50, 100];
@@ -27,10 +26,11 @@ const QUICK_AMOUNTS = [20, 50, 100];
  */
 export function DepositBalanceDialog({
   currentBalance,
-  onDeposited,
 }: DepositBalanceDialogProps) {
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState('');
+
+  const depositToWallet = useWalletStore((state) => state.depositToWallet);
 
   const parsedAmount = useMemo(() => {
     if (amount.trim().length === 0) return 0;
@@ -46,10 +46,8 @@ export function DepositBalanceDialog({
     event.preventDefault();
 
     try {
-      const wallet = depositBalance(parsedAmount);
+      const wallet = depositToWallet(parsedAmount);
 
-      window.dispatchEvent(new Event('wallet:updated'));
-      onDeposited();
       setOpen(false);
       setAmount('');
 
