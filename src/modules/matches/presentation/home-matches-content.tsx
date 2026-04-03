@@ -1,5 +1,6 @@
 import type { Match } from '@/modules/matches/domain/match';
 import { HomeMatchesSection } from '@/modules/matches/presentation/home-matches-section';
+import { RightSidebar } from '@/modules/matches/presentation/right-sidebar';
 import { getBaseUrl } from '@/shared/lib/get-base-url';
 import type { ApiSuccessResponse } from '@/shared/types/api';
 
@@ -25,5 +26,22 @@ async function getMatches(): Promise<Match[]> {
 export async function HomeMatchesContent() {
   const matches = await getMatches();
 
-  return <HomeMatchesSection matches={matches} />;
+  return (
+    <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      {/* Main content */}
+      <div className="space-y-6">
+        <HomeMatchesSection matches={matches} />
+
+        {/* Sidebar in mobile/tablet */}
+        <div className="lg:hidden">
+          <RightSidebar matches={matches} />
+        </div>
+      </div>
+
+      {/* Sidebar in desktop */}
+      <div className="hidden lg:block">
+        <RightSidebar matches={matches} />
+      </div>
+    </div>
+  );
 }
