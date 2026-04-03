@@ -1,4 +1,5 @@
 import './globals.css';
+import '@/shared/styles/animations.scss';
 
 import { AppProviders } from '@/shared/providers/app-providers';
 import { Geist, Geist_Mono } from 'next/font/google';

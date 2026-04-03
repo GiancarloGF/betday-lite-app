@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { placeBet } from '@/modules/bets/application/place-bet.use-case';
@@ -16,6 +16,7 @@ import {
 } from '@/shared/components/ui/dialog';
 import { Input } from '@/shared/components/ui/input';
 import { AppError } from '@/shared/errors/app-error';
+import { cn } from '@/shared/lib/utils';
 import { useUserBetsStore } from '@/shared/stores/user-bets.store';
 import { useWalletStore } from '@/shared/stores/wallet.store';
 
@@ -44,25 +45,72 @@ export function PlaceBetDialog({
   onOpenChange,
 }: PlaceBetDialogProps) {
   const router = useRouter();
+  const pulseTimeoutRef = useRef<number | null>(null);
   const [stake, setStake] = useState('');
+  const [isReturnEmphasized, setIsReturnEmphasized] = useState(false);
   const { wallet, refreshWallet } = useWalletStore();
   const addUserBet = useUserBetsStore((state) => state.addUserBet);
 
-  const selectedOdd = useMemo(() => {
+  const selectedOdd = (() => {
     if (pick === 'HOME') return match.market.odds.home;
     if (pick === 'DRAW') return match.market.odds.draw;
     return match.market.odds.away;
-  }, [match, pick]);
+  })();
 
-  const parsedStake = useMemo(() => {
+  const parsedStake = (() => {
     if (stake.trim().length === 0) return 0;
     return Number(stake);
-  }, [stake]);
+  })();
 
-  const estimatedReturn = useMemo(() => {
+  const estimatedReturn = (() => {
     if (!Number.isFinite(parsedStake) || parsedStake <= 0) return 0;
     return parsedStake * selectedOdd;
-  }, [parsedStake, selectedOdd]);
+  })();
+
+  useEffect(() => {
+    return () => {
+      if (pulseTimeoutRef.current !== null) {
+        window.clearTimeout(pulseTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  function triggerReturnEmphasis(nextStake: string) {
+    if (!open || nextStake.trim().length === 0) {
+      setIsReturnEmphasized(false);
+
+      if (pulseTimeoutRef.current !== null) {
+        window.clearTimeout(pulseTimeoutRef.current);
+        pulseTimeoutRef.current = null;
+      }
+
+      return;
+    }
+
+    setIsReturnEmphasized(false);
+
+    if (pulseTimeoutRef.current !== null) {
+      window.clearTimeout(pulseTimeoutRef.current);
+    }
+
+    pulseTimeoutRef.current = window.setTimeout(() => {
+      setIsReturnEmphasized(true);
+      pulseTimeoutRef.current = null;
+    }, 10);
+  }
+
+  function handleOpenChange(nextOpen: boolean) {
+    if (!nextOpen) {
+      setIsReturnEmphasized(false);
+
+      if (pulseTimeoutRef.current !== null) {
+        window.clearTimeout(pulseTimeoutRef.current);
+        pulseTimeoutRef.current = null;
+      }
+    }
+
+    onOpenChange(nextOpen);
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -79,7 +127,7 @@ export function PlaceBetDialog({
 
       refreshWallet();
 
-      onOpenChange(false);
+      handleOpenChange(false);
       setStake('');
 
       toast.success(
@@ -98,8 +146,8 @@ export function PlaceBetDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-2rem)] max-w-lg">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="motion-scale-fade-enter w-[calc(100vw-2rem)] max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
             Confirmar apuesta
@@ -161,13 +209,23 @@ export function PlaceBetDialog({
               min="1"
               max="500"
               value={stake}
-              onChange={(event) => setStake(event.target.value)}
+              onChange={(event) => {
+                const nextStake = event.target.value;
+
+                setStake(nextStake);
+                triggerReturnEmphasis(nextStake);
+              }}
               placeholder="Ingresa tu stake"
               required
             />
           </div>
 
-          <div className="bg-surface-muted rounded-[1.4rem] border border-white/70 p-4 text-sm">
+          <div
+            className={cn(
+              'bg-surface-muted rounded-[1.4rem] border border-white/70 p-4 text-sm',
+              isReturnEmphasized && 'motion-soft-pulse',
+            )}
+          >
             <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
               Retorno estimado
             </p>

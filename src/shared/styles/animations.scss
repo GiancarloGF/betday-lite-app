@@ -1,5 +1,196 @@
-$brand-color: #ed1d26;
-$black-color: #000000;
-$success-color: #16a34a;
-$warning-color: #f59e0b;
-$danger-color: #dc2626;
+:root {
+  --motion-duration-fast: 140ms;
+  --motion-duration-medium: 240ms;
+  --motion-duration-slow: 420ms;
+  --motion-ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --motion-ease-emphasis: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --motion-ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --motion-stagger-step: 70ms;
+  --motion-surface-lift-y: -3px;
+}
+
+@keyframes motion-fade-up-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes motion-scale-fade-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes motion-nav-underline-enter {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes motion-soft-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow:
+      0 0 0 0 color-mix(in oklch, var(--brand) 20%, transparent),
+      0 0 0 0 color-mix(in oklch, white 0%, transparent);
+  }
+
+  45% {
+    transform: scale(1.015);
+    box-shadow:
+      0 0 0 10px color-mix(in oklch, var(--brand) 0%, transparent),
+      0 14px 30px -22px color-mix(in oklch, var(--brand) 28%, black);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 0 0 color-mix(in oklch, var(--brand) 0%, transparent),
+      0 0 0 0 color-mix(in oklch, white 0%, transparent);
+  }
+}
+
+@keyframes motion-flash-highlight {
+  0% {
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklch, var(--brand) 0%, transparent),
+      0 0 0 0 color-mix(in oklch, var(--brand) 0%, transparent);
+  }
+
+  30% {
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklch, var(--brand) 36%, white),
+      0 18px 35px -24px color-mix(in oklch, var(--brand) 24%, black);
+  }
+
+  100% {
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklch, var(--brand) 0%, transparent),
+      0 0 0 0 color-mix(in oklch, var(--brand) 0%, transparent);
+  }
+}
+
+@layer utilities {
+  .motion-fade-up-enter {
+    animation: motion-fade-up-enter var(--motion-duration-medium)
+      var(--motion-ease-enter) both;
+    will-change: transform, opacity;
+  }
+
+  .motion-scale-fade-enter {
+    animation: motion-scale-fade-enter var(--motion-duration-medium)
+      var(--motion-ease-enter) both;
+    will-change: transform, opacity;
+  }
+
+  .motion-stagger-container > .motion-stagger-item {
+    animation: motion-fade-up-enter var(--motion-duration-medium)
+      var(--motion-ease-enter) both;
+    animation-delay: calc(
+      var(--motion-item-index, 0) * var(--motion-stagger-step)
+    );
+    will-change: transform, opacity;
+  }
+
+  .motion-pressable-surface {
+    transition:
+      background-color 300ms var(--motion-ease-smooth),
+      color 300ms var(--motion-ease-smooth);
+  }
+
+  .motion-odds-button {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  }
+
+  .motion-odds-button:hover,
+  .motion-odds-button:focus-visible {
+    background-color: var(--brand);
+  }
+
+  .motion-odds-button:hover .motion-odds-label,
+  .motion-odds-button:focus-visible .motion-odds-label {
+    color: color-mix(in oklch, var(--brand-foreground) 86%, white);
+  }
+
+  .motion-odds-button:hover .motion-odds-value,
+  .motion-odds-button:focus-visible .motion-odds-value {
+    color: var(--brand-foreground);
+  }
+
+  .motion-odds-label,
+  .motion-odds-value {
+    transition: color 300ms var(--motion-ease-smooth);
+  }
+
+  .motion-nav-link {
+    position: relative;
+    display: inline-flex;
+    padding-bottom: 0.35rem;
+    transition: color 220ms var(--motion-ease-smooth);
+  }
+
+  .motion-nav-link::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    border-radius: 999px;
+    background-color: var(--brand);
+    content: '';
+    transform: scaleX(0);
+    transform-origin: center;
+    pointer-events: none;
+  }
+
+  .motion-nav-link[data-active='true']::after {
+    transform: scaleX(1);
+    animation: motion-nav-underline-enter 260ms var(--motion-ease-enter) both;
+  }
+
+  .motion-soft-pulse {
+    animation: motion-soft-pulse var(--motion-duration-slow)
+      var(--motion-ease-enter) both;
+  }
+
+  .motion-flash-highlight {
+    animation: motion-flash-highlight var(--motion-duration-slow)
+      var(--motion-ease-enter) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-fast: 1ms;
+    --motion-duration-medium: 1ms;
+    --motion-duration-slow: 1ms;
+    --motion-stagger-step: 0ms;
+    --motion-surface-lift-y: 0px;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+}

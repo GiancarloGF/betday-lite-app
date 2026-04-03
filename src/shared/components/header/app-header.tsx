@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
+import { cn } from '@/shared/lib/utils';
 import { useWalletStore } from '@/shared/stores/wallet.store';
 import { LogOutIcon, UserIcon } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
@@ -44,21 +45,23 @@ export function AppHeader() {
           <nav className="hidden items-center gap-6 md:flex">
             <Link
               href="/"
-              className={
-                pathname === '/'
-                  ? 'text-foreground text-sm font-semibold'
-                  : 'text-muted-foreground text-sm font-semibold'
-              }
+              data-active={pathname === '/'}
+              className={cn(
+                'motion-nav-link text-sm font-semibold',
+                pathname === '/' ? 'text-foreground' : 'text-muted-foreground',
+              )}
             >
               Apuestas del dia
             </Link>
             <Link
               href="/profile"
-              className={
+              data-active={pathname === '/profile'}
+              className={cn(
+                'motion-nav-link text-sm font-semibold',
                 pathname === '/profile'
-                  ? 'text-foreground text-sm font-semibold'
-                  : 'text-muted-foreground text-sm font-semibold'
-              }
+                  ? 'text-foreground'
+                  : 'text-muted-foreground',
+              )}
             >
               Mis apuestas
             </Link>

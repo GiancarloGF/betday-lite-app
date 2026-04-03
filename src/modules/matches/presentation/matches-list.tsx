@@ -23,7 +23,7 @@ export function MatchesList({ matches }: { matches: Match[] }) {
 
   return (
     <div className="space-y-5">
-      {groupedMatches.map((group) => (
+      {groupedMatches.map((group, groupIndex) => (
         <section key={group.dateKey} className="space-y-3">
           <div className="flex items-center gap-3">
             <h2 className="text-foreground text-sm font-semibold tracking-tight">
@@ -32,9 +32,13 @@ export function MatchesList({ matches }: { matches: Match[] }) {
             <div className="bg-border h-px flex-1" />
           </div>
 
-          <div className="grid gap-3">
-            {group.matches.map((match) => (
-              <MatchCard key={match.id} match={match} />
+          <div className="motion-stagger-container grid gap-3">
+            {group.matches.map((match, matchIndex) => (
+              <MatchCard
+                key={match.id}
+                match={match}
+                index={groupIndex * 12 + matchIndex}
+              />
             ))}
           </div>
         </section>
