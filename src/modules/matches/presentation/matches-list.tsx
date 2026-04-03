@@ -1,4 +1,5 @@
 import type { Match } from '../domain/match';
+import { groupMatchesByDate } from './match-date.utils';
 import { MatchCard } from './match-card';
 
 /**
@@ -18,10 +19,25 @@ export function MatchesList({ matches }: { matches: Match[] }) {
     );
   }
 
+  const groupedMatches = groupMatchesByDate(matches);
+
   return (
-    <div className="grid gap-3">
-      {matches.map((match) => (
-        <MatchCard key={match.id} match={match} />
+    <div className="space-y-5">
+      {groupedMatches.map((group) => (
+        <section key={group.dateKey} className="space-y-3">
+          <div className="flex items-center gap-3">
+            <h2 className="text-foreground text-sm font-semibold tracking-tight">
+              {group.label}
+            </h2>
+            <div className="bg-border h-px flex-1" />
+          </div>
+
+          <div className="grid gap-3">
+            {group.matches.map((match) => (
+              <MatchCard key={match.id} match={match} />
+            ))}
+          </div>
+        </section>
       ))}
     </div>
   );

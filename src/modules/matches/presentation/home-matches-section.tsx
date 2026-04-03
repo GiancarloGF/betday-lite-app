@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 
 import type { Match } from '../domain/match';
+import { getMatchDateKey, getMatchDateKeys } from './match-date.utils';
 import { MatchesFilters } from './matches-filters';
 import { MatchesList } from './matches-list';
 
@@ -15,8 +16,13 @@ type HomeMatchesSectionProps = {
  */
 export function HomeMatchesSection({ matches }: HomeMatchesSectionProps) {
   const [search, setSearch] = useState('');
+  const [selectedDate, setSelectedDate] = useState('all');
   const [selectedLeague, setSelectedLeague] = useState('all');
   const [selectedTeam, setSelectedTeam] = useState('all');
+
+  const dates = useMemo(() => {
+    return getMatchDateKeys(matches);
+  }, [matches]);
 
   const leagues = useMemo(() => {
     return [...new Set(matches.map((match) => match.league.name))].sort();
@@ -34,6 +40,9 @@ export function HomeMatchesSection({ matches }: HomeMatchesSectionProps) {
     const normalizedSearch = search.trim().toLowerCase();
 
     return matches.filter((match) => {
+      const matchesDate =
+        selectedDate === 'all' || getMatchDateKey(match) === selectedDate;
+
       const matchesLeague =
         selectedLeague === 'all' || match.league.name === selectedLeague;
 
@@ -56,19 +65,22 @@ export function HomeMatchesSection({ matches }: HomeMatchesSectionProps) {
         normalizedSearch.length === 0 ||
         searchableValues.includes(normalizedSearch);
 
-      return matchesLeague && matchesTeam && matchesSearch;
+      return matchesDate && matchesLeague && matchesTeam && matchesSearch;
     });
-  }, [matches, search, selectedLeague, selectedTeam]);
+  }, [matches, search, selectedDate, selectedLeague, selectedTeam]);
 
   return (
     <section className="flex min-h-0 flex-col gap-5 xl:h-full">
       <MatchesFilters
         search={search}
+        selectedDate={selectedDate}
         selectedLeague={selectedLeague}
         selectedTeam={selectedTeam}
+        dates={dates}
         leagues={leagues}
         teams={teams}
         onSearchChange={setSearch}
+        onDateChange={setSelectedDate}
         onLeagueChange={setSelectedLeague}
         onTeamChange={setSelectedTeam}
       />
