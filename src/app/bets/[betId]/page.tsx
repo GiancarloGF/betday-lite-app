@@ -1,12 +1,16 @@
+import { getServerSession } from 'next-auth';
+
 import { authOptions } from '@/modules/auth/infrastructure/auth.config';
 import type { Bet } from '@/modules/bets/domain/bet';
-import { BetsHistorySection } from '@/modules/bets/presentation/bets-history-section';
+import { BetDetailSection } from '@/modules/bets/presentation/bet-detail-section';
 import type { Match } from '@/modules/matches/domain/match';
 import { AppShell } from '@/shared/components/layout/app-shell';
 import { getBaseUrl } from '@/shared/lib/get-base-url';
-import { UserBetsHydrator } from '@/shared/providers/user-bets-hydrator';
 import type { ApiSuccessResponse } from '@/shared/types/api';
-import { getServerSession } from 'next-auth';
+
+type PageProps = {
+  params: Promise<{ betId: string }>;
+};
 
 async function getSeedBets(): Promise<Bet[]> {
   const baseUrl = await getBaseUrl();
@@ -41,35 +45,22 @@ async function getMatches(): Promise<Match[]> {
 }
 
 /**
- * Renders the private profile page with the user's bet history.
+ * Renders the bet detail page.
  */
-export default async function ProfilePage() {
+export default async function BetDetailPage({ params }: PageProps) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
     return null;
   }
 
+  const { betId } = await params;
+
   const [seedBets, matches] = await Promise.all([getSeedBets(), getMatches()]);
 
   return (
-    <>
-      <UserBetsHydrator />
-      <AppShell>
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <p className="text-brand text-sm font-medium tracking-wide uppercase">
-              Profile
-            </p>
-            <h1 className="text-foreground text-3xl font-bold">Mis apuestas</h1>
-            <p className="text-muted-foreground text-sm">
-              Revisa tu historial de apuestas y filtra por estado.
-            </p>
-          </div>
-
-          <BetsHistorySection seedBets={seedBets} matches={matches} />
-        </div>
-      </AppShell>
-    </>
+    <AppShell>
+      <BetDetailSection betId={betId} seedBets={seedBets} matches={matches} />
+    </AppShell>
   );
 }
