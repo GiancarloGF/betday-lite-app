@@ -1,26 +1,9 @@
-import type { Match } from '@/modules/matches/domain/match';
-import { HomeMatchesSection } from '@/modules/matches/presentation/home-matches-section';
+import { HomeMatchesContent } from '@/modules/matches/presentation/home-matches-content';
+import { MatchesListSkeleton } from '@/modules/matches/presentation/matches-list-skeleton';
 import { AppShell } from '@/shared/components/layout/app-shell';
-import { env } from '@/shared/lib/env';
-import type { ApiSuccessResponse } from '@/shared/types/api';
-
-async function getMatches(): Promise<Match[]> {
-  const response = await fetch(`${env.NEXTAUTH_URL}/api/matches`, {
-    cache: 'no-store',
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch matches');
-  }
-
-  const payload = (await response.json()) as ApiSuccessResponse<Match[]>;
-
-  return payload.data;
-}
+import { Suspense } from 'react';
 
 export default async function HomePage() {
-  const matches = await getMatches();
-
   return (
     <AppShell>
       <div className="space-y-6">
@@ -37,7 +20,9 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <HomeMatchesSection matches={matches} />
+        <Suspense fallback={<MatchesListSkeleton />}>
+          <HomeMatchesContent />
+        </Suspense>
       </div>
     </AppShell>
   );
