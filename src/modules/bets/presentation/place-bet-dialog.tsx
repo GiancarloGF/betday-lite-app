@@ -16,6 +16,7 @@ import {
 } from '@/shared/components/ui/dialog';
 import { Input } from '@/shared/components/ui/input';
 import { AppError } from '@/shared/errors/app-error';
+import { useUserBetsStore } from '@/shared/stores/user-bets.store';
 import { useWalletStore } from '@/shared/stores/wallet.store';
 
 type PlaceBetDialogProps = {
@@ -45,6 +46,7 @@ export function PlaceBetDialog({
   const router = useRouter();
   const [stake, setStake] = useState('');
   const { wallet, refreshWallet } = useWalletStore();
+  const addUserBet = useUserBetsStore((state) => state.addUserBet);
 
   const selectedOdd = useMemo(() => {
     if (pick === 'HOME') return match.market.odds.home;
@@ -72,6 +74,8 @@ export function PlaceBetDialog({
         stake: parsedStake,
         userId,
       });
+
+      addUserBet(bet);
 
       refreshWallet();
 

@@ -1,4 +1,4 @@
-import matchesData from '@/data/matches.today.50.json';
+import matchesData from '@/shared/data/matches.today.50.json';
 import { Match } from '../domain/match';
 
 export class JsonMatchesRepository {

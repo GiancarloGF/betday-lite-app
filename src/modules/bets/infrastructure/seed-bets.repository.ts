@@ -1,4 +1,4 @@
-import betsData from '@/data/bets.me.50.json';
+import betsData from '@/shared/data/bets.me.50.json';
 import { Bet } from '../domain/bet';
 
 const DEMO_USER_ID = 'demo-user';

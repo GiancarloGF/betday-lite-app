@@ -1,8 +1,8 @@
 import './globals.css';
 
-import { ReactNode } from 'react';
+import { AppProviders } from '@/shared/providers/app-providers';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { AuthSessionProvider } from '@/shared/providers/session-provider';
+import { ReactNode } from 'react';
 
 const geistSans = Geist({
   variable: '--font-sans',
@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
-        <AuthSessionProvider>{children}</AuthSessionProvider>
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   );
