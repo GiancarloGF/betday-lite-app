@@ -5,7 +5,7 @@ export default withAuth({
     signIn: '/login',
   },
 });
-// Limit middleware execution to private routes only
+
 export const config = {
   matcher: ['/profile', '/bets/:path*'],
 };
