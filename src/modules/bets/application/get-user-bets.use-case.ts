@@ -1,22 +1,15 @@
-import { SeedBetsRepository } from '../infrastructure/seed-bets.repository';
-import { LocalStorageBetsRepository } from '../infrastructure/local-storage-bets.repository';
-import { Bet } from '../domain/bet';
+import type { Bet } from '@/modules/bets/domain/bet';
+import { SupabaseBetsRepository } from '@/modules/bets/infrastructure/supabase-bets.repository';
+
+type GetUserBetsInput = {
+  userId: string;
+};
 
 /**
- * Retrieves all user bets by combining:
- * - Seed bets (initial json dataset)
- * - User-created bets (localStorage)
- *
- * Returns bets sorted by most recent first
+ * Returns all bets for a given application user.
  */
-export async function getUserBets(): Promise<Bet[]> {
-  const seedRepo = new SeedBetsRepository();
-  const localRepo = new LocalStorageBetsRepository();
+export async function getUserBets(input: GetUserBetsInput): Promise<Bet[]> {
+  const repository = new SupabaseBetsRepository();
 
-  const seedBets = await seedRepo.getAll();
-  const userBets = localRepo.getAll();
-
-  return [...seedBets, ...userBets].sort(
-    (a, b) => new Date(b.placedAt).getTime() - new Date(a.placedAt).getTime(),
-  );
+  return repository.getAllByUserId(input.userId);
 }

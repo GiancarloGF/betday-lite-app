@@ -1,7 +1,39 @@
-import { getUserBets } from './get-user-bets.use-case';
+import type { Bet } from '@/modules/bets/domain/bet';
+import { SupabaseBetsRepository } from '@/modules/bets/infrastructure/supabase-bets.repository';
+import type { Match } from '@/modules/matches/domain/match';
+import { SupabaseMatchesRepository } from '@/modules/matches/infrastructure/supabase-matches.repository';
 
-export async function getBetDetail(betId: string) {
-  const bets = await getUserBets();
+type GetBetDetailInput = {
+  betId: string;
+  userId: string;
+};
 
-  return bets.find((bet) => bet.id === betId) || null;
+type BetDetailResult = {
+  bet: Bet | null;
+  match: Match | null;
+};
+
+/**
+ * Returns a user-owned bet and its related match.
+ */
+export async function getBetDetail(
+  input: GetBetDetailInput,
+): Promise<BetDetailResult> {
+  const betsRepository = new SupabaseBetsRepository();
+  const bet = await betsRepository.getByIdForUser(input.userId, input.betId);
+
+  if (!bet) {
+    return {
+      bet: null,
+      match: null,
+    };
+  }
+
+  const matchesRepository = new SupabaseMatchesRepository();
+  const match = await matchesRepository.getById(bet.matchId);
+
+  return {
+    bet,
+    match,
+  };
 }

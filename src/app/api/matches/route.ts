@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
 
-import { getTodayMatches } from '@/modules/matches/application/get-today-matches.use-case';
+import { SupabaseMatchesRepository } from '@/modules/matches/infrastructure/supabase-matches.repository';
 
 /**
- * Returns today's matches sorted by nearest start time first.
- * This route is used as the server-facing source for the public timeline.
+ * Returns matches from the current server-authoritative source.
  */
 export async function GET() {
   try {
-    const matches = await getTodayMatches();
+    const matchesRepository = new SupabaseMatchesRepository();
+    const matches = await matchesRepository.getAll();
 
     return NextResponse.json({
       data: matches,

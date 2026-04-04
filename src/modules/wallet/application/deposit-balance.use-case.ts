@@ -1,10 +1,20 @@
-import { LocalStorageWalletRepository } from '../infrastructure/local-storage-wallet.repository';
+import type { Wallet } from '@/modules/wallet/domain/wallet';
+import { SupabaseWalletRepository } from '@/modules/wallet/infrastructure/supabase-wallet.repository';
 import { validateDepositAmount } from '@/shared/validations/wallet.validation';
 
-export function depositBalance(amount: number) {
+/**
+ * Deposits balance into the server-authoritative wallet.
+ */
+export async function depositBalance({
+  amount,
+  userId,
+}: {
+  amount: number;
+  userId: string;
+}): Promise<Wallet> {
   validateDepositAmount(amount);
 
-  const repo = new LocalStorageWalletRepository();
+  const walletRepository = new SupabaseWalletRepository();
 
-  return repo.deposit(amount);
+  return walletRepository.deposit(userId, amount);
 }

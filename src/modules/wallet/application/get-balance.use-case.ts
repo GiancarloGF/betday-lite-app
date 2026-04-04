@@ -1,7 +1,15 @@
-import { LocalStorageWalletRepository } from '../infrastructure/local-storage-wallet.repository';
+import type { Wallet } from '@/modules/wallet/domain/wallet';
+import { SupabaseWalletRepository } from '@/modules/wallet/infrastructure/supabase-wallet.repository';
 
-export function getBalance() {
-  const repo = new LocalStorageWalletRepository();
+type GetBalanceInput = {
+  userId: string;
+};
 
-  return repo.get();
+/**
+ * Returns the current server-authoritative wallet for a user.
+ */
+export async function getBalance(input: GetBalanceInput): Promise<Wallet> {
+  const walletRepository = new SupabaseWalletRepository();
+
+  return walletRepository.getByUserId(input.userId);
 }

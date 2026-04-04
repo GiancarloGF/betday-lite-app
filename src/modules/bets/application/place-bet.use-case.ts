@@ -1,6 +1,6 @@
-import { LocalStorageBetsRepository } from '../infrastructure/local-storage-bets.repository';
-import { LocalStorageWalletRepository } from '../../wallet/infrastructure/local-storage-wallet.repository';
-import { JsonMatchesRepository } from '../../matches/infrastructure/json-matches.repository';
+import { SupabaseBetsRepository } from '../infrastructure/supabase-bets.repository';
+import { SupabaseWalletRepository } from '../../wallet/infrastructure/supabase-wallet.repository';
+import { SupabaseMatchesRepository } from '../../matches/infrastructure/supabase-matches.repository';
 import { Bet, BetPick } from '../domain/bet';
 import {
   InsufficientBalanceError,
@@ -22,8 +22,8 @@ type PlaceBetInput = {
  * - Validate stake constraints
  * - Validate user balance
  * - Freeze selected odd at betting time
- * - Persist bet in local storage
- * - Deduct balance from wallet
+ * - Persist bet in Supabase
+ * - Deduct balance from the server-authoritative wallet
  */
 export async function placeBet(input: PlaceBetInput): Promise<Bet> {
   const { matchId, pick, stake, userId } = input;
@@ -31,18 +31,16 @@ export async function placeBet(input: PlaceBetInput): Promise<Bet> {
   // Validate stake
   validateStake(stake);
 
-  const walletRepo = new LocalStorageWalletRepository();
-  const wallet = walletRepo.get();
+  const walletRepo = new SupabaseWalletRepository();
+  const wallet = await walletRepo.getByUserId(userId);
 
   // Validate balance
   if (stake > wallet.balance) {
     throw new InsufficientBalanceError();
   }
 
-  const matchesRepo = new JsonMatchesRepository();
-  const matches = await matchesRepo.getTodayMatches();
-
-  const match = matches.find((m) => m.id === matchId);
+  const matchesRepo = new SupabaseMatchesRepository();
+  const match = await matchesRepo.getById(matchId);
 
   if (!match) {
     throw new NotFoundError('Partido no encontrado', 'MATCH_NOT_FOUND');
@@ -61,27 +59,19 @@ export async function placeBet(input: PlaceBetInput): Promise<Bet> {
     throw new NotFoundError('No se encontró cuota', 'ODD_NOT_FOUND');
   }
 
-  // Create bet object
-  const bet: Bet = {
-    id: crypto.randomUUID(),
+  const betsRepo = new SupabaseBetsRepository();
+  const bet = await betsRepo.create({
+    userId,
     matchId,
-    placedAt: new Date().toISOString(),
     pick,
     odd: odds,
     stake,
     status: 'PENDING',
-    return: null,
+    returnAmount: null,
     source: 'user',
-    userId,
-  };
+  });
 
-  const betsRepo = new LocalStorageBetsRepository();
-
-  // Persist bet
-  betsRepo.create(bet);
-
-  // Deduct stake from wallet after successful bet creation
-  walletRepo.debit(stake);
+  await walletRepo.debit(userId, stake);
 
   return bet;
 }
