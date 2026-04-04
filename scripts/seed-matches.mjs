@@ -14,6 +14,43 @@ const matchesFilePath = path.join(
   'data',
   'matches.today.50.json',
 );
+const envFilePath = path.join(projectRoot, '.env.local');
+
+function loadLocalEnvFile() {
+  return readFile(envFilePath, 'utf-8')
+    .then((fileContent) => {
+      const lines = fileContent.split(/\r?\n/);
+
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+
+        if (trimmedLine.length === 0 || trimmedLine.startsWith('#')) {
+          continue;
+        }
+
+        const separatorIndex = trimmedLine.indexOf('=');
+
+        if (separatorIndex === -1) {
+          continue;
+        }
+
+        const key = trimmedLine.slice(0, separatorIndex).trim();
+        const rawValue = trimmedLine.slice(separatorIndex + 1).trim();
+        const normalizedValue = rawValue.replace(/^['"]|['"]$/g, '');
+
+        if (!process.env[key]) {
+          process.env[key] = normalizedValue;
+        }
+      }
+    })
+    .catch((error) => {
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
+        return;
+      }
+
+      throw error;
+    });
+}
 
 function readRequiredEnv(name) {
   const value = process.env[name];
@@ -53,10 +90,12 @@ async function readMatchesSeed() {
 }
 
 async function seedMatches() {
-  const supabaseUrl = readRequiredEnv('SUPABASE_URL');
-  const supabaseServiceRoleKey = readRequiredEnv('SUPABASE_SERVICE_ROLE_KEY');
+  await loadLocalEnvFile();
 
-  const supabase = createClient(supabaseUrl, supabaseServiceRoleKey, {
+  const supabaseUrl = readRequiredEnv('SUPABASE_URL');
+  const supabaseSecretKey = readRequiredEnv('SUPABASE_SECRET_KEY');
+
+  const supabase = createClient(supabaseUrl, supabaseSecretKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
