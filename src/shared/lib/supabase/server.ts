@@ -14,7 +14,7 @@ export function getSupabaseServerClient(): SupabaseClient {
 
   supabaseServerClient = createClient(
     supabaseServerEnv.SUPABASE_URL,
-    supabaseServerEnv.SUPABASE_SERVICE_ROLE_KEY,
+    supabaseServerEnv.SUPABASE_SECRET_KEY,
     {
       auth: {
         autoRefreshToken: false,

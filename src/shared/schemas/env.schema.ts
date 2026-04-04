@@ -11,7 +11,7 @@ export type Env = z.infer<typeof envSchema>;
 
 export const supabaseServerEnvSchema = z.object({
   SUPABASE_URL: z.string().url(),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  SUPABASE_SECRET_KEY: z.string().min(1),
 });
 
 export type SupabaseServerEnv = z.infer<typeof supabaseServerEnvSchema>;
