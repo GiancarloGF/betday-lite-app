@@ -10,7 +10,7 @@ type RightSidebarProps = {
  */
 export function RightSidebar({ pendingBets }: RightSidebarProps) {
   return (
-    <aside className="space-y-4 xl:sticky xl:top-24">
+    <aside className="space-y-4">
       <PendingBetsPanel pendingBets={pendingBets} />
     </aside>
   );

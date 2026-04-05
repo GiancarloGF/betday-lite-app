@@ -70,7 +70,7 @@ export function HomeMatchesSection({ matches }: HomeMatchesSectionProps) {
   }, [matches, search, selectedDate, selectedLeague, selectedTeam]);
 
   return (
-    <section className="flex min-h-0 flex-col gap-5 xl:h-full">
+    <section className="flex flex-col gap-5">
       <MatchesFilters
         search={search}
         selectedDate={selectedDate}
@@ -85,9 +85,7 @@ export function HomeMatchesSection({ matches }: HomeMatchesSectionProps) {
         onTeamChange={setSelectedTeam}
       />
 
-      <div className="min-h-0 flex-1 overflow-y-auto pr-1">
-        <MatchesList matches={filteredMatches} />
-      </div>
+      <MatchesList matches={filteredMatches} />
     </section>
   );
 }

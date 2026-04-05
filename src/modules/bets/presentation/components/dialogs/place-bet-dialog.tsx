@@ -1,7 +1,7 @@
 'use client';
 
-import { getBalanceAction } from '@/modules/wallet/presentation/actions/get-balance.action';
 import { placeBetAction } from '@/modules/bets/presentation/actions/place-bet.action';
+import { getBalanceAction } from '@/modules/wallet/presentation/actions/get-balance.action';
 import { useRouter } from 'next/navigation';
 import { useEffect, useId, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -12,6 +12,7 @@ import { Button } from '@/shared/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/dialog';
@@ -30,6 +31,8 @@ const PICK_LABELS: Record<BetPick, string> = {
   DRAW: 'X',
   AWAY: '2',
 };
+
+const QUICK_STAKES = [10, 20, 50];
 
 /**
  * Handles stake input, estimated return and bet confirmation.
@@ -64,6 +67,11 @@ export function PlaceBetDialog({
   const estimatedReturn = (() => {
     if (!Number.isFinite(parsedStake) || parsedStake <= 0) return 0;
     return parsedStake * selectedOdd;
+  })();
+
+  const estimatedProfit = (() => {
+    if (!Number.isFinite(parsedStake) || parsedStake <= 0) return 0;
+    return estimatedReturn - parsedStake;
   })();
 
   useEffect(() => {
@@ -112,6 +120,15 @@ export function PlaceBetDialog({
       isCancelled = true;
     };
   }, [open]);
+
+  function handleQuickStakeClick(value: number) {
+    const nextValue = parsedStake + value;
+    const nextStake = nextValue.toString();
+
+    setErrorMessage(null);
+    setStake(nextStake);
+    triggerReturnEmphasis(nextStake);
+  }
 
   function triggerReturnEmphasis(nextStake: string) {
     if (!open || nextStake.trim().length === 0) {
@@ -189,55 +206,60 @@ export function PlaceBetDialog({
           <DialogTitle className="text-xl font-semibold">
             Confirmar apuesta
           </DialogTitle>
+          <DialogDescription>
+            Revisa la selección, define tu stake y confirma la apuesta.
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="bg-surface-muted rounded-[1.4rem] border border-white/70 p-4">
-            <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+          <div className="bg-surface-muted rounded-[1.5rem] border border-white/70 p-4">
+            <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.2em] uppercase">
               Partido
             </p>
-            <p className="text-foreground mt-1 text-base font-semibold">
+            <p className="text-foreground mt-1 text-xl font-semibold tracking-tight">
               {match.homeTeam.name} vs {match.awayTeam.name}
+            </p>
+            <p className="text-muted-foreground mt-1 text-sm">
+              {match.league.name} · {match.league.country}
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="border-border bg-muted/45 rounded-[1.25rem] border p-4">
+          <div className="grid gap-2 sm:grid-cols-3">
+            <div className="bg-muted/45 rounded-[1.2rem] border border-white/70 px-4 py-3">
               <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
                 Selección
               </p>
-              <p className="text-foreground mt-1 text-lg font-bold">
+              <p className="text-foreground mt-1 text-2xl font-black tracking-tight">
                 {PICK_LABELS[pick]}
               </p>
             </div>
 
-            <div className="border-border bg-muted/45 rounded-[1.25rem] border p-4">
+            <div className="bg-muted/45 rounded-[1.2rem] border border-white/70 px-4 py-3">
               <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
                 Cuota
               </p>
-              <p className="text-foreground mt-1 text-lg font-bold">
+              <p className="text-foreground mt-1 text-2xl font-black tracking-tight">
                 {selectedOdd.toFixed(2)}
               </p>
             </div>
 
-            <div className="border-border bg-muted/45 rounded-[1.25rem] border p-4">
+            <div className="bg-muted/45 rounded-[1.2rem] border border-white/70 px-4 py-3">
               <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
                 Saldo
               </p>
-              <p className="text-foreground mt-1 text-lg font-bold">
-                {isBalanceLoading || currentBalance === null
-                  ? 'Cargando...'
-                  : `S/ ${currentBalance.toFixed(2)}`}
+              <p className="text-foreground mt-1 text-xl font-black tracking-tight whitespace-nowrap tabular-nums">
+                <span className="text-sm">S/</span>{' '}
+                {currentBalance?.toFixed(2) ?? 0.0}
               </p>
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             <label
               htmlFor="stake"
               className="text-foreground text-xs font-semibold tracking-[0.18em] uppercase"
             >
-              Stake
+              Monto de apuesta
             </label>
 
             <Input
@@ -255,11 +277,25 @@ export function PlaceBetDialog({
                 setStake(nextStake);
                 triggerReturnEmphasis(nextStake);
               }}
-              placeholder="Ingresa tu stake"
+              placeholder="Ingresa tu monto"
               aria-invalid={errorMessage !== null}
               aria-describedby={errorMessage ? stakeErrorId : undefined}
               required
             />
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            {QUICK_STAKES.map((quickStake) => (
+              <Button
+                key={quickStake}
+                type="button"
+                variant="outline"
+                onClick={() => handleQuickStakeClick(quickStake)}
+                className="w-full"
+              >
+                S/ {quickStake}
+              </Button>
+            ))}
           </div>
 
           {errorMessage ? (
@@ -274,16 +310,29 @@ export function PlaceBetDialog({
 
           <div
             className={cn(
-              'bg-surface-muted rounded-[1.4rem] border border-white/70 p-4 text-sm',
+              'bg-surface-muted rounded-[1.4rem] border border-white/70 px-4 py-4',
               isReturnEmphasized && 'motion-soft-pulse',
             )}
           >
-            <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
-              Retorno estimado
-            </p>
-            <p className="text-foreground mt-1 text-xl font-bold">
-              S/ {estimatedReturn.toFixed(2)}
-            </p>
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+                  Retorno estimado
+                </p>
+                <p className="text-foreground mt-1 text-3xl font-black tracking-tight">
+                  S/ {estimatedReturn.toFixed(2)}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+                  Ganancia
+                </p>
+                <p className="text-foreground mt-1 text-lg font-bold tracking-tight">
+                  S/ {estimatedProfit.toFixed(2)}
+                </p>
+              </div>
+            </div>
           </div>
 
           <Button

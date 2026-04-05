@@ -27,7 +27,7 @@ export function PendingBetsPanel({
   }
 
   return (
-    <Card className="space-y-5 rounded-[1.7rem] p-5">
+    <Card className="flex flex-col gap-5 rounded-[1.7rem] p-5">
       <div>
         <p className="text-foreground text-sm font-semibold tracking-[0.2em] uppercase">
           Ultimas apuestas ({pendingBets.length})

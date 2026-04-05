@@ -3,7 +3,6 @@ import { format, parseISO } from 'date-fns';
 
 import type { Bet, BetPick, BetStatus } from '@/modules/bets/domain/bet';
 import type { Match } from '@/modules/matches/domain/match';
-import { Button } from '@/shared/components/ui/button';
 import { Badge } from '@/shared/components/ui/badge';
 
 type BetHistoryCardProps = {
@@ -33,78 +32,63 @@ export function BetHistoryCard({ bet, match }: BetHistoryCardProps) {
   const homeTeam = match?.homeTeam.name ?? 'Equipo local';
   const awayTeam = match?.awayTeam.name ?? 'Equipo visitante';
   const placedAt = format(parseISO(bet.placedAt), 'dd/MM/yyyy HH:mm');
+  const statusLabel =
+    bet.status === 'PENDING'
+      ? 'Pendiente'
+      : bet.status === 'WON'
+        ? 'Ganada'
+        : 'Perdida';
 
   return (
-    <article className="border-border bg-card rounded-[1.7rem] border border-white/70 p-5 shadow-[0_24px_45px_-32px_rgba(15,23,42,0.28)]">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-3">
-          <div>
+    <Link
+      href={`/bets/${bet.id}`}
+      aria-label={`Ver detalle de la apuesta para ${homeTeam} vs ${awayTeam}`}
+      className="group block focus-visible:outline-none"
+    >
+      <article className="border-border bg-card group-hover:bg-accent/20 group-focus-visible:border-brand/20 group-focus-visible:bg-accent/20 rounded-[1.7rem] border border-white/70 p-5 shadow-[0_24px_45px_-32px_rgba(15,23,42,0.28)] transition-colors duration-150">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
             <p className="text-brand text-[11px] font-semibold tracking-[0.2em] uppercase">
               {match?.league.name ?? 'Liga'}
             </p>
-            <h3 className="text-foreground mt-1 text-xl font-semibold">
+            <h3 className="text-foreground mt-1 line-clamp-2 text-lg font-semibold">
               {homeTeam} vs {awayTeam}
             </h3>
+            <p className="text-muted-foreground mt-2 text-sm">{placedAt}</p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <div className="bg-muted/55 rounded-[1.1rem] p-3">
-              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
-                Selección
-              </p>
-              <p className="text-foreground mt-1 text-sm font-semibold">
-                {PICK_LABELS[bet.pick]}
-              </p>
-            </div>
+          <Badge variant={STATUS_VARIANTS[bet.status]}>{statusLabel}</Badge>
+        </div>
 
-            <div className="bg-muted/55 rounded-[1.1rem] p-3">
-              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
-                Cuota
-              </p>
-              <p className="text-foreground mt-1 text-sm font-semibold">
-                {bet.odd.toFixed(2)}
-              </p>
-            </div>
-
-            <div className="bg-muted/55 rounded-[1.1rem] p-3">
-              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
-                Stake
-              </p>
-              <p className="text-foreground mt-1 text-sm font-semibold">
-                S/ {bet.stake.toFixed(2)}
-              </p>
-            </div>
-
-            <div className="bg-muted/55 rounded-[1.1rem] p-3">
-              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
-                Fecha
-              </p>
-              <p className="text-foreground mt-1 text-sm font-semibold">
-                {placedAt}
-              </p>
-            </div>
+        <div className="bg-muted/55 mt-4 grid grid-cols-3 gap-3 rounded-[1.1rem] p-3">
+          <div>
+            <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+              Pick
+            </p>
+            <p className="text-foreground mt-1 text-sm font-semibold">
+              {PICK_LABELS[bet.pick]}
+            </p>
           </div>
 
-          {bet.return !== null ? (
-            <div className="bg-muted/55 rounded-[1.1rem] p-3">
-              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
-                Retorno
-              </p>
-              <p className="text-foreground mt-1 text-sm font-semibold">
-                S/ {bet.return.toFixed(2)}
-              </p>
-            </div>
-          ) : null}
-        </div>
+          <div>
+            <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+              Cuota
+            </p>
+            <p className="text-foreground mt-1 text-sm font-semibold">
+              {bet.odd.toFixed(2)}
+            </p>
+          </div>
 
-        <div className="flex flex-col items-start gap-3 lg:items-end">
-          <Badge variant={STATUS_VARIANTS[bet.status]}>{bet.status}</Badge>
-
-          <Button asChild variant="outline" className="min-w-32">
-            <Link href={`/bets/${bet.id}`}>Ver detalle</Link>
-          </Button>
+          <div>
+            <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+              Stake
+            </p>
+            <p className="text-foreground mt-1 text-sm font-semibold">
+              S/ {bet.stake.toFixed(2)}
+            </p>
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
+    </Link>
   );
 }

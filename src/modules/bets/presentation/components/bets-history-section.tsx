@@ -6,11 +6,19 @@ import { es } from 'date-fns/locale';
 import Link from 'next/link';
 
 import type { Bet, BetPick, BetStatus } from '@/modules/bets/domain/bet';
+import { BetHistoryCard } from '@/modules/bets/presentation/components/bet-history-card';
 import { BetsEmptyState } from '@/modules/bets/presentation/components/bets-empty-state';
 import type { Match } from '@/modules/matches/domain/match';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/shared/components/ui/select';
 import {
   Table,
   TableBody,
@@ -117,12 +125,32 @@ export function BetsHistorySection({ bets, matches }: BetsHistorySectionProps) {
     <section className="space-y-6">
       <div className="bg-card rounded-[1.6rem] border border-white/70 p-4 shadow-[0_22px_40px_-30px_rgba(15,23,42,0.24)]">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="w-full md:hidden">
+            <Select
+              value={selectedStatus}
+              onValueChange={(value) =>
+                setSelectedStatus(value as BetStatus | 'ALL')
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Filtrar por estado" />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {getStatusTabLabel(status)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <Tabs
             value={selectedStatus}
             onValueChange={(value) =>
               setSelectedStatus(value as BetStatus | 'ALL')
             }
-            className="w-full lg:w-auto"
+            className="hidden w-full md:block lg:w-auto"
           >
             <TabsList className="bg-muted h-auto rounded-2xl p-1">
               {STATUS_OPTIONS.map((status) => (
@@ -150,100 +178,111 @@ export function BetsHistorySection({ bets, matches }: BetsHistorySectionProps) {
       {filteredBets.length === 0 ? (
         <BetsEmptyState />
       ) : (
-        <div className="bg-card overflow-hidden rounded-[1.6rem] border border-white/70 shadow-[0_22px_40px_-30px_rgba(15,23,42,0.24)]">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/70 hover:bg-muted/70">
-                <TableHead className="rounded-tl-[1.6rem]">
-                  Detalles del partido
-                </TableHead>
-                <TableHead>Selección</TableHead>
-                <TableHead>Cuota</TableHead>
-                <TableHead>Monto</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Fecha/Hora</TableHead>
-                <TableHead className="rounded-tr-[1.6rem] text-right">
-                  Acción
-                </TableHead>
-              </TableRow>
-            </TableHeader>
+        <>
+          <div className="space-y-4 md:hidden">
+            {filteredBets.map(({ bet, match }) => (
+              <BetHistoryCard key={bet.id} bet={bet} match={match} />
+            ))}
+          </div>
 
-            <TableBody>
-              {filteredBets.map(({ bet, match }) => {
-                const placedAt = parseISO(bet.placedAt);
+          <div className="bg-card hidden overflow-hidden rounded-[1.6rem] border border-white/70 shadow-[0_22px_40px_-30px_rgba(15,23,42,0.24)] md:block">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/70 hover:bg-muted/70">
+                  <TableHead className="rounded-tl-[1.6rem]">
+                    Detalles del partido
+                  </TableHead>
+                  <TableHead>Selección</TableHead>
+                  <TableHead>Cuota</TableHead>
+                  <TableHead>Monto</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Fecha/Hora</TableHead>
+                  <TableHead className="rounded-tr-[1.6rem] text-right">
+                    Acción
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
 
-                return (
-                  <TableRow key={bet.id} className="bg-card hover:bg-muted/20">
-                    <TableCell>
-                      <div className="flex flex-col gap-1">
-                        <p className="text-foreground text-base font-medium">
-                          {match?.homeTeam.name ?? 'Equipo local'} vs{' '}
-                          {match?.awayTeam.name ?? 'Equipo visitante'}
-                        </p>
-                        <p className="text-muted-foreground text-sm">
-                          {match?.league.name ?? 'Liga'}
-                        </p>
-                      </div>
-                    </TableCell>
+              <TableBody>
+                {filteredBets.map(({ bet, match }) => {
+                  const placedAt = parseISO(bet.placedAt);
 
-                    <TableCell>
-                      <Badge
-                        variant="secondary"
-                        className="min-w-9 justify-center rounded-lg px-3 tracking-normal"
-                      >
-                        {PICK_LABELS[bet.pick]}
-                      </Badge>
-                    </TableCell>
+                  return (
+                    <TableRow
+                      key={bet.id}
+                      className="bg-card hover:bg-muted/20"
+                    >
+                      <TableCell>
+                        <div className="flex flex-col gap-1">
+                          <p className="text-foreground text-base font-medium">
+                            {match?.homeTeam.name ?? 'Equipo local'} vs{' '}
+                            {match?.awayTeam.name ?? 'Equipo visitante'}
+                          </p>
+                          <p className="text-muted-foreground text-sm">
+                            {match?.league.name ?? 'Liga'}
+                          </p>
+                        </div>
+                      </TableCell>
 
-                    <TableCell className="text-foreground text-[1.75rem] leading-none font-semibold">
-                      {bet.odd.toFixed(2)}
-                    </TableCell>
-
-                    <TableCell className="text-foreground text-[1.75rem] leading-none font-semibold">
-                      ${bet.stake.toFixed(2)}
-                    </TableCell>
-
-                    <TableCell>
-                      <Badge
-                        variant={STATUS_VARIANTS[bet.status]}
-                        className="tracking-normal"
-                      >
-                        {getStatusLabel(bet.status)}
-                      </Badge>
-                    </TableCell>
-
-                    <TableCell>
-                      <div className="flex flex-col gap-1">
-                        <p className="text-foreground text-sm font-semibold">
-                          {format(placedAt, 'dd MMM, yyyy', { locale: es })}
-                        </p>
-                        <p className="text-muted-foreground text-sm">
-                          {format(placedAt, 'HH:mm')}
-                        </p>
-                      </div>
-                    </TableCell>
-
-                    <TableCell className="text-right">
-                      <Button
-                        asChild
-                        variant="outline"
-                        size="sm"
-                        className="relative z-10"
-                      >
-                        <Link
-                          href={`/bets/${bet.id}`}
-                          aria-label={`Ver detalle de la apuesta para ${match?.homeTeam.name ?? 'Equipo local'} vs ${match?.awayTeam.name ?? 'Equipo visitante'}`}
+                      <TableCell>
+                        <Badge
+                          variant="secondary"
+                          className="min-w-9 justify-center rounded-lg px-3 tracking-normal"
                         >
-                          Ver detalle
-                        </Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </div>
+                          {PICK_LABELS[bet.pick]}
+                        </Badge>
+                      </TableCell>
+
+                      <TableCell className="text-foreground text-[1.75rem] leading-none font-semibold">
+                        {bet.odd.toFixed(2)}
+                      </TableCell>
+
+                      <TableCell className="text-foreground text-[1.75rem] leading-none font-semibold">
+                        S/ {bet.stake.toFixed(2)}
+                      </TableCell>
+
+                      <TableCell>
+                        <Badge
+                          variant={STATUS_VARIANTS[bet.status]}
+                          className="tracking-normal"
+                        >
+                          {getStatusLabel(bet.status)}
+                        </Badge>
+                      </TableCell>
+
+                      <TableCell>
+                        <div className="flex flex-col gap-1">
+                          <p className="text-foreground text-sm font-semibold">
+                            {format(placedAt, 'dd MMM, yyyy', { locale: es })}
+                          </p>
+                          <p className="text-muted-foreground text-sm">
+                            {format(placedAt, 'HH:mm')}
+                          </p>
+                        </div>
+                      </TableCell>
+
+                      <TableCell className="text-right">
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="relative z-10"
+                        >
+                          <Link
+                            href={`/bets/${bet.id}`}
+                            aria-label={`Ver detalle de la apuesta para ${match?.homeTeam.name ?? 'Equipo local'} vs ${match?.awayTeam.name ?? 'Equipo visitante'}`}
+                          >
+                            Ver detalle
+                          </Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        </>
       )}
     </section>
   );

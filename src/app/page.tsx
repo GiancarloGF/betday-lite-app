@@ -18,7 +18,7 @@ export const metadata: Metadata = createPageMetadata({
 export default async function HomePage() {
   return (
     <AppShell>
-      <div className="space-y-7 xl:flex xl:h-[calc(100vh-9.5rem)] xl:flex-col xl:space-y-6 xl:overflow-hidden">
+      <div className="space-y-7 xl:space-y-6">
         <div className="space-y-3">
           <p className="text-brand text-sm font-semibold tracking-[0.24em] uppercase">
             Match Timeline
@@ -32,14 +32,14 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="grid min-h-0 flex-1 gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
-          <div className="min-h-0">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+          <div>
             <Suspense fallback={<MatchesListSkeleton />}>
               <HomeMatchesSectionContent />
             </Suspense>
           </div>
 
-          <div className="min-h-0">
+          <div>
             <Suspense fallback={<PendingBetsPanelSkeleton />}>
               <HomePendingBetsSidebarContent />
             </Suspense>
