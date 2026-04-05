@@ -2,16 +2,17 @@
 
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
 
 import { Button } from '@/shared/components/ui/button';
+
+type LoginFormProps = {
+  callbackUrl: string;
+};
 
 /**
  * Starts the Google sign-in flow for the dedicated /login page.
  */
-export function LoginForm() {
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/';
+export function LoginForm({ callbackUrl }: LoginFormProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -27,7 +28,6 @@ export function LoginForm() {
     if (!result) {
       setErrorMessage('No se pudo iniciar sesión. Inténtalo nuevamente.');
       setIsSubmitting(false);
-      return;
     }
   }
 
@@ -48,6 +48,10 @@ export function LoginForm() {
       >
         {isSubmitting ? 'Redirigiendo...' : 'Continuar con Google'}
       </Button>
+
+      <p className="text-muted-foreground text-center text-xs">
+        Acceso exclusivo con cuenta de Google.
+      </p>
     </div>
   );
 }

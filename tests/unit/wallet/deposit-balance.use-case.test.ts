@@ -1,19 +1,24 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { depositBalance } from '@/modules/wallet/application/deposit-balance.use-case';
-import { LocalStorageWalletRepository } from '@/modules/wallet/infrastructure/local-storage-wallet.repository';
+import { depositBalanceUseCase } from '@/modules/wallet/application/deposit-balance.use-case';
+import { SupabaseWalletRepository } from '@/modules/wallet/infrastructure/supabase-wallet.repository';
 import { ValidationError } from '@/shared/errors/app-error';
 
 describe('depositBalance', () => {
-  it('should increase wallet balance when the amount is valid', () => {
-    const walletRepository = new LocalStorageWalletRepository();
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
 
-    walletRepository.save({
-      balance: 20,
+  it('should increase wallet balance when the amount is valid', async () => {
+    vi.spyOn(SupabaseWalletRepository.prototype, 'deposit').mockResolvedValue({
+      balance: 50,
       currency: 'PEN',
     });
 
-    const updatedWallet = depositBalance(30);
+    const updatedWallet = await depositBalanceUseCase({
+      amount: 30,
+      userId: 'user-1',
+    });
 
     expect(updatedWallet).toEqual({
       balance: 50,
@@ -21,11 +26,21 @@ describe('depositBalance', () => {
     });
   });
 
-  it('should reject a non-positive amount', () => {
-    expect(() => depositBalance(0)).toThrow(ValidationError);
+  it('should reject a non-positive amount', async () => {
+    await expect(
+      depositBalanceUseCase({
+        amount: 0,
+        userId: 'user-1',
+      }),
+    ).rejects.toBeInstanceOf(ValidationError);
   });
 
-  it('should reject an amount with more than 2 decimal places', () => {
-    expect(() => depositBalance(10.555)).toThrow(ValidationError);
+  it('should reject an amount with more than 2 decimal places', async () => {
+    await expect(
+      depositBalanceUseCase({
+        amount: 10.555,
+        userId: 'user-1',
+      }),
+    ).rejects.toBeInstanceOf(ValidationError);
   });
 });

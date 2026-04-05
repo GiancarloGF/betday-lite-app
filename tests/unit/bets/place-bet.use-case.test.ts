@@ -1,32 +1,71 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 
-import { placeBet } from '@/modules/bets/application/place-bet.use-case';
-import { LocalStorageBetsRepository } from '@/modules/bets/infrastructure/local-storage-bets.repository';
-import { LocalStorageWalletRepository } from '@/modules/wallet/infrastructure/local-storage-wallet.repository';
+import { placeBetUseCase } from '@/modules/bets/application/place-bet.use-case';
+import { SupabaseBetsRepository } from '@/modules/bets/infrastructure/supabase-bets.repository';
+import { SupabaseMatchesRepository } from '@/modules/matches/infrastructure/supabase-matches.repository';
+import { SupabaseWalletRepository } from '@/modules/wallet/infrastructure/supabase-wallet.repository';
 import {
   ValidationError,
   InsufficientBalanceError,
 } from '@/shared/errors/app-error';
 
-/**
- * Mocks crypto.randomUUID for deterministic test results.
- */
 beforeEach(() => {
-  vi.stubGlobal('crypto', {
-    randomUUID: () => 'bet-test-id',
+  vi.restoreAllMocks();
+  vi.spyOn(SupabaseWalletRepository.prototype, 'getByUserId').mockResolvedValue(
+    {
+      balance: 100,
+      currency: 'PEN',
+    },
+  );
+  vi.spyOn(SupabaseMatchesRepository.prototype, 'getById').mockResolvedValue({
+    id: 'match_001',
+    startTime: '2026-02-12T00:00:00-05:00',
+    league: {
+      id: 'premier_league',
+      name: 'Premier League',
+      country: 'England',
+    },
+    homeTeam: {
+      id: 'bha',
+      name: 'Brighton',
+      shortName: 'BHA',
+    },
+    awayTeam: {
+      id: 'bre',
+      name: 'Brentford',
+      shortName: 'BRE',
+    },
+    market: {
+      type: '1X2',
+      odds: {
+        home: 4.67,
+        draw: 4.44,
+        away: 5.96,
+      },
+    },
+  });
+  vi.spyOn(SupabaseWalletRepository.prototype, 'debit').mockResolvedValue({
+    balance: 90,
+    currency: 'PEN',
   });
 });
 
 describe('placeBet', () => {
   it('should create a pending bet with the frozen odd for the selected pick', async () => {
-    const walletRepository = new LocalStorageWalletRepository();
-
-    walletRepository.save({
-      balance: 100,
-      currency: 'PEN',
+    vi.spyOn(SupabaseBetsRepository.prototype, 'create').mockResolvedValue({
+      id: 'bet-test-id',
+      matchId: 'match_001',
+      placedAt: '2026-02-12T00:00:00-05:00',
+      pick: 'HOME',
+      odd: 4.67,
+      stake: 10,
+      status: 'PENDING',
+      return: null,
+      source: 'user',
+      userId: 'demo-user',
     });
 
-    const bet = await placeBet({
+    const bet = await placeBetUseCase({
       matchId: 'match_001',
       pick: 'HOME',
       stake: 10,
@@ -46,65 +85,101 @@ describe('placeBet', () => {
     });
   });
 
-  it('should persist the newly created bet in localStorage', async () => {
-    const walletRepository = new LocalStorageWalletRepository();
-
-    walletRepository.save({
-      balance: 100,
-      currency: 'PEN',
+  it('should persist the newly created bet in Supabase', async () => {
+    const createSpy = vi
+      .spyOn(SupabaseBetsRepository.prototype, 'create')
+      .mockResolvedValue({
+        id: 'bet-test-id',
+        matchId: 'match_002',
+        placedAt: '2026-02-12T00:30:00-05:00',
+        pick: 'AWAY',
+        odd: 5.35,
+        stake: 20,
+        status: 'PENDING',
+        return: null,
+        source: 'user',
+        userId: 'demo-user',
+      });
+    vi.spyOn(SupabaseMatchesRepository.prototype, 'getById').mockResolvedValue({
+      id: 'match_002',
+      startTime: '2026-02-12T00:30:00-05:00',
+      league: {
+        id: 'premier_league',
+        name: 'Premier League',
+        country: 'England',
+      },
+      homeTeam: {
+        id: 'tot',
+        name: 'Tottenham',
+        shortName: 'TOT',
+      },
+      awayTeam: {
+        id: 'whu',
+        name: 'West Ham',
+        shortName: 'WHU',
+      },
+      market: {
+        type: '1X2',
+        odds: {
+          home: 1.63,
+          draw: 4.34,
+          away: 5.35,
+        },
+      },
     });
 
-    await placeBet({
+    await placeBetUseCase({
       matchId: 'match_002',
       pick: 'AWAY',
       stake: 20,
       userId: 'demo-user',
     });
 
-    const betsRepository = new LocalStorageBetsRepository();
-
-    const storedBets = betsRepository.getAll();
-
-    expect(storedBets).toHaveLength(1);
-    expect(storedBets[0]).toMatchObject({
-      id: 'bet-test-id',
+    expect(createSpy).toHaveBeenCalledWith({
+      userId: 'demo-user',
       matchId: 'match_002',
       pick: 'AWAY',
       odd: 5.35,
       stake: 20,
+      status: 'PENDING',
+      returnAmount: null,
+      source: 'user',
     });
   });
 
   it('should debit the wallet after placing a valid bet', async () => {
-    const walletRepository = new LocalStorageWalletRepository();
-
-    walletRepository.save({
-      balance: 100,
-      currency: 'PEN',
+    const debitSpy = vi
+      .spyOn(SupabaseWalletRepository.prototype, 'debit')
+      .mockResolvedValue({
+        balance: 85,
+        currency: 'PEN',
+      });
+    vi.spyOn(SupabaseBetsRepository.prototype, 'create').mockResolvedValue({
+      id: 'bet-test-id',
+      matchId: 'match_003',
+      placedAt: '2026-02-12T01:00:00-05:00',
+      pick: 'DRAW',
+      odd: 3.94,
+      stake: 15,
+      status: 'PENDING',
+      return: null,
+      source: 'user',
+      userId: 'demo-user',
     });
 
-    await placeBet({
+    await placeBetUseCase({
       matchId: 'match_003',
       pick: 'DRAW',
       stake: 15,
       userId: 'demo-user',
     });
 
-    const updatedWallet = walletRepository.get();
-
-    expect(updatedWallet.balance).toBe(85);
+    expect(debitSpy).toHaveBeenCalledWith('demo-user', 15);
   });
 
   it('should reject a stake lower than the minimum allowed', async () => {
-    const walletRepository = new LocalStorageWalletRepository();
-
-    walletRepository.save({
-      balance: 100,
-      currency: 'PEN',
-    });
-
     await expect(
-      placeBet({
+      placeBetUseCase({
         matchId: 'match_001',
         pick: 'HOME',
         stake: 0.5,
@@ -114,15 +189,8 @@ describe('placeBet', () => {
   });
 
   it('should reject a stake with more than 2 decimal places', async () => {
-    const walletRepository = new LocalStorageWalletRepository();
-
-    walletRepository.save({
-      balance: 100,
-      currency: 'PEN',
-    });
-
     await expect(
-      placeBet({
+      placeBetUseCase({
         matchId: 'match_001',
         pick: 'HOME',
         stake: 10.123,
@@ -132,15 +200,16 @@ describe('placeBet', () => {
   });
 
   it('should reject a bet when the user has insufficient balance', async () => {
-    const walletRepository = new LocalStorageWalletRepository();
-
-    walletRepository.save({
+    vi.spyOn(
+      SupabaseWalletRepository.prototype,
+      'getByUserId',
+    ).mockResolvedValue({
       balance: 5,
       currency: 'PEN',
     });
 
     await expect(
-      placeBet({
+      placeBetUseCase({
         matchId: 'match_001',
         pick: 'HOME',
         stake: 10,
