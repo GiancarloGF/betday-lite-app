@@ -5,7 +5,7 @@ import { validateDepositAmount } from '@/shared/validations/wallet.validation';
 /**
  * Deposits balance into the server-authoritative wallet.
  */
-export async function depositBalance({
+export async function depositBalanceUseCase({
   amount,
   userId,
 }: {

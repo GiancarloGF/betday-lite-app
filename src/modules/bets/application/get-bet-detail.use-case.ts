@@ -16,7 +16,7 @@ type BetDetailResult = {
 /**
  * Returns a user-owned bet and its related match.
  */
-export async function getBetDetail(
+export async function getBetDetailUseCase(
   input: GetBetDetailInput,
 ): Promise<BetDetailResult> {
   const betsRepository = new SupabaseBetsRepository();

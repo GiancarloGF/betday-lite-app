@@ -8,7 +8,9 @@ type GetUserBetsInput = {
 /**
  * Returns all bets for a given application user.
  */
-export async function getUserBets(input: GetUserBetsInput): Promise<Bet[]> {
+export async function getUserBetsUseCase(
+  input: GetUserBetsInput,
+): Promise<Bet[]> {
   const repository = new SupabaseBetsRepository();
 
   return repository.getAllByUserId(input.userId);

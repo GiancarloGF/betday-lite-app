@@ -1,8 +1,10 @@
 'use client';
 
 import { useId, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
+import { depositBalanceAction } from '@/modules/wallet/presentation/deposit-balance.action';
 import { Button } from '@/shared/components/ui/button';
 import {
   Dialog,
@@ -12,8 +14,6 @@ import {
   DialogTrigger,
 } from '@/shared/components/ui/dialog';
 import { Input } from '@/shared/components/ui/input';
-import { AppError } from '@/shared/errors/app-error';
-import { useWalletStore } from '@/shared/stores/wallet.store';
 
 type DepositBalanceDialogProps = {
   currentBalance: number;
@@ -27,12 +27,12 @@ const QUICK_AMOUNTS = [20, 50, 100];
 export function DepositBalanceDialog({
   currentBalance,
 }: DepositBalanceDialogProps) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const amountErrorId = useId();
-
-  const depositToWallet = useWalletStore((state) => state.depositToWallet);
 
   const parsedAmount = useMemo(() => {
     if (amount.trim().length === 0) return 0;
@@ -45,27 +45,26 @@ export function DepositBalanceDialog({
     setAmount(nextValue.toString());
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrorMessage(null);
+    setIsSubmitting(true);
 
-    try {
-      const wallet = depositToWallet(parsedAmount);
+    const result = await depositBalanceAction(parsedAmount);
 
-      setOpen(false);
-      setAmount('');
+    setIsSubmitting(false);
 
-      toast.success(`Saldo actualizado a S/ ${wallet.balance.toFixed(2)}`);
-    } catch (error) {
-      if (error instanceof AppError) {
-        setErrorMessage(error.message);
-        toast.error(error.message);
-        return;
-      }
-
-      setErrorMessage('No se pudo actualizar el saldo');
-      toast.error('No se pudo actualizar el saldo');
+    if (!result.ok) {
+      setErrorMessage(result.errorMessage);
+      toast.error(result.errorMessage);
+      return;
     }
+
+    setOpen(false);
+    setAmount('');
+    router.refresh();
+
+    toast.success(`Saldo actualizado a S/ ${result.wallet.balance.toFixed(2)}`);
   }
 
   return (
@@ -141,8 +140,13 @@ export function DepositBalanceDialog({
             </p>
           ) : null}
 
-          <Button type="submit" className="w-full" size="lg">
-            Confirmar depósito
+          <Button
+            type="submit"
+            className="w-full"
+            size="lg"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Actualizando...' : 'Confirmar depósito'}
           </Button>
         </form>
       </DialogContent>

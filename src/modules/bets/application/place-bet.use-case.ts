@@ -25,7 +25,7 @@ type PlaceBetInput = {
  * - Persist bet in Supabase
  * - Deduct balance from the server-authoritative wallet
  */
-export async function placeBet(input: PlaceBetInput): Promise<Bet> {
+export async function placeBetUseCase(input: PlaceBetInput): Promise<Bet> {
   const { matchId, pick, stake, userId } = input;
 
   // Validate stake

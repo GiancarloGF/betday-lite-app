@@ -8,7 +8,9 @@ type GetBalanceInput = {
 /**
  * Returns the current server-authoritative wallet for a user.
  */
-export async function getBalance(input: GetBalanceInput): Promise<Wallet> {
+export async function getBalanceUseCase(
+  input: GetBalanceInput,
+): Promise<Wallet> {
   const walletRepository = new SupabaseWalletRepository();
 
   return walletRepository.getByUserId(input.userId);

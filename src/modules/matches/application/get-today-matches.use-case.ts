@@ -5,7 +5,7 @@ import { SupabaseMatchesRepository } from '../infrastructure/supabase-matches.re
  * Returns today's matches sorted by start time (ascending),
  * so the closest matches appear first in the timeline
  */
-export async function getTodayMatches(): Promise<Match[]> {
+export async function getTodayMatchesUseCase(): Promise<Match[]> {
   const repository = new SupabaseMatchesRepository();
   const matches = await repository.getAll();
 

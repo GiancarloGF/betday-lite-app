@@ -58,6 +58,27 @@ export class SupabaseBetsRepository {
     return (data ?? []).map((row) => mapBetRowToDomain(row as BetRow));
   }
 
+  async getPendingByUserId(userId: string): Promise<Bet[]> {
+    const supabase = getSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from('bets')
+      .select(
+        'id, user_id, match_id, placed_at, pick, odd, stake, status, return_amount, source',
+      )
+      .eq('user_id', userId)
+      .eq('status', 'PENDING')
+      .order('placed_at', { ascending: false });
+
+    if (error) {
+      throw new Error(
+        `Failed to read pending bets for user ${userId}: ${error.message}`,
+      );
+    }
+
+    return (data ?? []).map((row) => mapBetRowToDomain(row as BetRow));
+  }
+
   /**
    * Reads a single bet only if it belongs to the given application user.
    */

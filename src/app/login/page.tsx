@@ -4,13 +4,13 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = createPageMetadata({
   title: 'Ingresar',
-  description: 'Accede con las credenciales demo para probar la aplicacion.',
+  description: 'Accede con Google para continuar en la aplicación.',
   path: '/login',
   index: false,
 });
 
 /**
- * Dedicated sign-in page required for middleware redirects
+ * Dedicated sign-in page required for proxy redirects
  * and accessibility-friendly authentication flow.
  */
 export default function LoginPage() {
@@ -24,17 +24,11 @@ export default function LoginPage() {
           </h1>
           <h2 className="text-foreground text-3xl font-semibold">Ingresar</h2>
           <p className="text-muted-foreground text-sm">
-            Usa las credenciales demo para continuar.
+            Usa tu cuenta de Google para continuar.
           </p>
         </div>
 
         <LoginForm />
-
-        <div className="bg-surface-muted text-muted-foreground mt-6 rounded-2xl border border-white/70 p-4 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
-          <p className="text-foreground font-medium">Credenciales demo</p>
-          <p>Email: demo@betday.com</p>
-          <p>Password: BetDay123</p>
-        </div>
       </div>
     </main>
   );

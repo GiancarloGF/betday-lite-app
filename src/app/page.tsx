@@ -1,4 +1,6 @@
-import { HomeMatchesContent } from '@/modules/matches/presentation/home-matches-content';
+import { HomePendingBetsSidebarContent } from '@/modules/bets/presentation/home-pending-bets-sidebar-content';
+import { PendingBetsPanelSkeleton } from '@/modules/bets/presentation/pending-bets-panel-skeleton';
+import { HomeMatchesSectionContent } from '@/modules/matches/presentation/home-matches-section-content';
 import { MatchesListSkeleton } from '@/modules/matches/presentation/matches-list-skeleton';
 import { AppShell } from '@/shared/components/layout/app-shell';
 import { createPageMetadata } from '@/shared/lib/seo';
@@ -30,10 +32,18 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="min-h-0 flex-1">
-          <Suspense fallback={<MatchesListSkeleton />}>
-            <HomeMatchesContent />
-          </Suspense>
+        <div className="grid min-h-0 flex-1 gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="min-h-0">
+            <Suspense fallback={<MatchesListSkeleton />}>
+              <HomeMatchesSectionContent />
+            </Suspense>
+          </div>
+
+          <div className="min-h-0">
+            <Suspense fallback={<PendingBetsPanelSkeleton />}>
+              <HomePendingBetsSidebarContent />
+            </Suspense>
+          </div>
         </div>
       </div>
     </AppShell>

@@ -10,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
 import { cn } from '@/shared/lib/utils';
-import { useWalletStore } from '@/shared/stores/wallet.store';
 import { LogOutIcon, UserIcon } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
@@ -23,10 +22,9 @@ import Link from 'next/link';
  * - user balance
  * - login/logout button depending on session state
  */
-export function AppHeader() {
+export function AppHeader({ currentBalance }: { currentBalance: number }) {
   const { data: session, status } = useSession();
   const pathname = usePathname();
-  const wallet = useWalletStore((state) => state.wallet);
 
   const isAuthenticated = status === 'authenticated';
   const userInitial = session?.user?.email?.charAt(0).toUpperCase() ?? 'U';
@@ -70,7 +68,7 @@ export function AppHeader() {
 
         <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
           {isAuthenticated ? (
-            <DepositBalanceDialog currentBalance={wallet.balance} />
+            <DepositBalanceDialog currentBalance={currentBalance} />
           ) : null}
 
           {isAuthenticated ? (

@@ -138,7 +138,6 @@ export function MatchCard({ match, index }: { match: Match; index: number }) {
         <PlaceBetDialog
           match={match}
           pick={selectedPick}
-          userId={session.user.id}
           open={isBetDialogOpen}
           onOpenChange={setIsBetDialogOpen}
         />

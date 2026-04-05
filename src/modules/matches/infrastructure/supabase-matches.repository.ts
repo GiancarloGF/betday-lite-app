@@ -93,4 +93,25 @@ export class SupabaseMatchesRepository {
 
     return mapMatchRowToDomain(data as MatchRow);
   }
+
+  async getByIds(matchIds: string[]): Promise<Match[]> {
+    if (matchIds.length === 0) {
+      return [];
+    }
+
+    const supabase = getSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from('matches')
+      .select(
+        'id, start_time, league_id, league_name, league_country, home_team_id, home_team_name, home_team_short_name, away_team_id, away_team_name, away_team_short_name, market_type, odd_home, odd_draw, odd_away',
+      )
+      .in('id', matchIds);
+
+    if (error) {
+      throw new Error(`Failed to read matches by ids: ${error.message}`);
+    }
+
+    return (data ?? []).map((row) => mapMatchRowToDomain(row as MatchRow));
+  }
 }

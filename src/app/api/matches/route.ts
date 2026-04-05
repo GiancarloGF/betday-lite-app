@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
 
-import { SupabaseMatchesRepository } from '@/modules/matches/infrastructure/supabase-matches.repository';
+import { getTodayMatchesUseCase } from '@/modules/matches/application/get-today-matches.use-case';
 
 /**
  * Returns matches from the current server-authoritative source.
  */
 export async function GET() {
   try {
-    const matchesRepository = new SupabaseMatchesRepository();
-    const matches = await matchesRepository.getAll();
+    const matches = await getTodayMatchesUseCase();
 
     return NextResponse.json({
       data: matches,
