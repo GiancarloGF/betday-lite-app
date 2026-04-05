@@ -4,6 +4,7 @@ import { ProfileBetsHistorySkeleton } from '@/modules/bets/presentation/componen
 import { AppShell } from '@/shared/components/layout/app-shell';
 import { createPageMetadata } from '@/shared/lib/seo';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
@@ -29,6 +30,16 @@ export default async function ProfilePage() {
     <AppShell>
       <div className="space-y-7">
         <div className="space-y-3">
+          <nav
+            aria-label="Breadcrumb"
+            className="text-muted-foreground flex items-center gap-2 text-sm"
+          >
+            <Link href="/" className="hover:text-foreground transition-colors">
+              Home
+            </Link>
+            <span>/</span>
+            <span className="text-foreground">Mis apuestas</span>
+          </nav>
           <p className="text-brand text-sm font-semibold tracking-[0.24em] uppercase">
             Profile
           </p>

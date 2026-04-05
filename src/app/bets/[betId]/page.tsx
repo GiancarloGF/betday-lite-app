@@ -6,6 +6,7 @@ import { BetDetailSkeleton } from '@/modules/bets/presentation/components/skelet
 import { AppShell } from '@/shared/components/layout/app-shell';
 import { createPageMetadata } from '@/shared/lib/seo';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -35,6 +36,19 @@ export default async function BetDetailPage({ params }: PageProps) {
     <AppShell>
       <div className="space-y-7">
         <div className="space-y-3">
+          <nav
+            aria-label="Breadcrumb"
+            className="text-muted-foreground flex items-center gap-2 text-sm"
+          >
+            <Link
+              href="/profile"
+              className="hover:text-foreground transition-colors"
+            >
+              Mis apuestas
+            </Link>
+            <span>/</span>
+            <span className="text-foreground">Detalle de apuesta</span>
+          </nav>
           <p className="text-brand text-sm font-semibold tracking-[0.24em] uppercase">
             Bet Detail
           </p>
