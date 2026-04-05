@@ -1,5 +1,5 @@
-import { getTodayMatchesAction } from '@/modules/matches/presentation/get-today-matches.action';
-import { HomeMatchesSection } from '@/modules/matches/presentation/home-matches-section';
+import { getTodayMatchesAction } from '@/modules/matches/presentation/actions/get-today-matches.action';
+import { HomeMatchesSection } from '@/modules/matches/presentation/components/home-matches-section';
 
 /**
  * Server component for the home matches column.

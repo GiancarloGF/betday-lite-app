@@ -1,18 +1,13 @@
-'use client';
-
-import { useMemo } from 'react';
 import { format, parseISO } from 'date-fns';
 
 import type { Bet, BetPick, BetStatus } from '@/modules/bets/domain/bet';
 import type { Match } from '@/modules/matches/domain/match';
-import { BetNotFound } from '@/modules/bets/presentation/bet-not-found';
-import { useUserBetsStore } from '@/shared/stores/user-bets.store';
+import { BetNotFound } from '@/modules/bets/presentation/components/bet-not-found';
 import { Badge } from '@/shared/components/ui/badge';
 
 type BetDetailSectionProps = {
-  betId: string;
-  seedBets: Bet[];
-  matches: Match[];
+  bet: Bet | null;
+  match?: Match;
 };
 
 const PICK_LABELS: Record<BetPick, string> = {
@@ -33,22 +28,7 @@ const STATUS_VARIANTS: Record<
 /**
  * Displays detailed information for a selected bet.
  */
-export function BetDetailSection({
-  betId,
-  seedBets,
-  matches,
-}: BetDetailSectionProps) {
-  const userBets = useUserBetsStore((state) => state.userBets);
-
-  const bet = useMemo(() => {
-    return [...seedBets, ...userBets].find((b) => b.id === betId);
-  }, [seedBets, userBets, betId]);
-
-  const match = useMemo(() => {
-    if (!bet) return undefined;
-    return matches.find((m) => m.id === bet.matchId);
-  }, [bet, matches]);
-
+export function BetDetailSection({ bet, match }: BetDetailSectionProps) {
   if (!bet) {
     return <BetNotFound />;
   }

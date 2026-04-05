@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from 'react';
 
-import type { Match } from '../domain/match';
-import { getMatchDateKey, getMatchDateKeys } from './match-date.utils';
+import type { Match } from '../../domain/match';
+import { getMatchDateKey, getMatchDateKeys } from '../match-date.utils';
 import { MatchesFilters } from './matches-filters';
 import { MatchesList } from './matches-list';
 

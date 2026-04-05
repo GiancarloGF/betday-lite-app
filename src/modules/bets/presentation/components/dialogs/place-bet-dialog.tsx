@@ -1,10 +1,11 @@
 'use client';
 
+import { getBalanceAction } from '@/modules/wallet/presentation/actions/get-balance.action';
+import { placeBetAction } from '@/modules/bets/presentation/actions/place-bet.action';
 import { useRouter } from 'next/navigation';
 import { useEffect, useId, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-import { placeBet } from '@/modules/bets/application/place-bet.use-case';
 import type { BetPick } from '@/modules/bets/domain/bet';
 import type { Match } from '@/modules/matches/domain/match';
 import { Button } from '@/shared/components/ui/button';
@@ -15,15 +16,11 @@ import {
   DialogTitle,
 } from '@/shared/components/ui/dialog';
 import { Input } from '@/shared/components/ui/input';
-import { AppError } from '@/shared/errors/app-error';
 import { cn } from '@/shared/lib/utils';
-import { useUserBetsStore } from '@/shared/stores/user-bets.store';
-import { useWalletStore } from '@/shared/stores/wallet.store';
 
 type PlaceBetDialogProps = {
   match: Match;
   pick: BetPick;
-  userId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
@@ -40,7 +37,6 @@ const PICK_LABELS: Record<BetPick, string> = {
 export function PlaceBetDialog({
   match,
   pick,
-  userId,
   open,
   onOpenChange,
 }: PlaceBetDialogProps) {
@@ -49,9 +45,10 @@ export function PlaceBetDialog({
   const [stake, setStake] = useState('');
   const [isReturnEmphasized, setIsReturnEmphasized] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentBalance, setCurrentBalance] = useState<number | null>(null);
+  const [isBalanceLoading, setIsBalanceLoading] = useState(false);
   const stakeErrorId = useId();
-  const { wallet, refreshWallet } = useWalletStore();
-  const addUserBet = useUserBetsStore((state) => state.addUserBet);
 
   const selectedOdd = (() => {
     if (pick === 'HOME') return match.market.odds.home;
@@ -76,6 +73,45 @@ export function PlaceBetDialog({
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    let isCancelled = false;
+
+    async function loadBalance() {
+      setIsBalanceLoading(true);
+      setErrorMessage(null);
+
+      try {
+        const wallet = await getBalanceAction();
+
+        if (isCancelled) {
+          return;
+        }
+
+        setCurrentBalance(wallet?.balance ?? null);
+      } catch {
+        if (isCancelled) {
+          return;
+        }
+
+        setErrorMessage('No se pudo cargar el saldo actual');
+      } finally {
+        if (!isCancelled) {
+          setIsBalanceLoading(false);
+        }
+      }
+    }
+
+    void loadBalance();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [open]);
 
   function triggerReturnEmphasis(nextStake: string) {
     if (!open || nextStake.trim().length === 0) {
@@ -105,6 +141,8 @@ export function PlaceBetDialog({
     if (!nextOpen) {
       setIsReturnEmphasized(false);
       setErrorMessage(null);
+      setCurrentBalance(null);
+      setIsBalanceLoading(false);
 
       if (pulseTimeoutRef.current !== null) {
         window.clearTimeout(pulseTimeoutRef.current);
@@ -118,37 +156,30 @@ export function PlaceBetDialog({
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrorMessage(null);
+    setIsSubmitting(true);
 
-    try {
-      const bet = await placeBet({
-        matchId: match.id,
-        pick,
-        stake: parsedStake,
-        userId,
-      });
+    const result = await placeBetAction({
+      matchId: match.id,
+      pick,
+      stake: parsedStake,
+    });
 
-      addUserBet(bet);
+    setIsSubmitting(false);
 
-      refreshWallet();
-
-      handleOpenChange(false);
-      setStake('');
-
-      toast.success(
-        `Apuesta registrada: ${PICK_LABELS[bet.pick]} @ ${bet.odd.toFixed(2)}`,
-      );
-
-      router.refresh();
-    } catch (error) {
-      if (error instanceof AppError) {
-        setErrorMessage(error.message);
-        toast.error(error.message);
-        return;
-      }
-
-      setErrorMessage('No se pudo registrar la apuesta');
-      toast.error('No se pudo registrar la apuesta');
+    if (!result.ok) {
+      setErrorMessage(result.errorMessage);
+      toast.error(result.errorMessage);
+      return;
     }
+
+    handleOpenChange(false);
+    setStake('');
+
+    toast.success(
+      `Apuesta registrada: ${PICK_LABELS[result.bet.pick]} @ ${result.bet.odd.toFixed(2)}`,
+    );
+
+    router.refresh();
   }
 
   return (
@@ -194,7 +225,9 @@ export function PlaceBetDialog({
                 Saldo
               </p>
               <p className="text-foreground mt-1 text-lg font-bold">
-                S/ {wallet.balance.toFixed(2)}
+                {isBalanceLoading || currentBalance === null
+                  ? 'Cargando...'
+                  : `S/ ${currentBalance.toFixed(2)}`}
               </p>
             </div>
           </div>
@@ -253,8 +286,15 @@ export function PlaceBetDialog({
             </p>
           </div>
 
-          <Button type="submit" className="w-full" size="lg">
-            Confirmar apuesta
+          <Button
+            type="submit"
+            className="w-full"
+            size="lg"
+            disabled={
+              isSubmitting || isBalanceLoading || currentBalance === null
+            }
+          >
+            {isSubmitting ? 'Registrando...' : 'Confirmar apuesta'}
           </Button>
         </form>
       </DialogContent>

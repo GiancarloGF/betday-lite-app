@@ -1,6 +1,6 @@
 'use client';
 
-import { DepositBalanceDialog } from '@/modules/wallet/presentation/deposit-balance-dialog';
+import { DepositBalanceDialog } from '@/modules/wallet/presentation/components/deposit-balance-dialog';
 import { Avatar, AvatarFallback } from '@/shared/components/ui/avatar';
 import { Button } from '@/shared/components/ui/button';
 import {

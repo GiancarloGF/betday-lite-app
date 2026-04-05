@@ -4,7 +4,7 @@ import { useId, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { depositBalanceAction } from '@/modules/wallet/presentation/deposit-balance.action';
+import { depositBalanceAction } from '@/modules/wallet/presentation/actions/deposit-balance.action';
 import { Button } from '@/shared/components/ui/button';
 import {
   Dialog,

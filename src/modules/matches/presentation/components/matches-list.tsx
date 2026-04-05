@@ -1,5 +1,5 @@
-import type { Match } from '../domain/match';
-import { groupMatchesByDate } from './match-date.utils';
+import type { Match } from '../../domain/match';
+import { groupMatchesByDate } from '../match-date.utils';
 import { MatchCard } from './match-card';
 
 /**

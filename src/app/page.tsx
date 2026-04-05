@@ -1,7 +1,7 @@
-import { HomePendingBetsSidebarContent } from '@/modules/bets/presentation/home-pending-bets-sidebar-content';
-import { PendingBetsPanelSkeleton } from '@/modules/bets/presentation/pending-bets-panel-skeleton';
-import { HomeMatchesSectionContent } from '@/modules/matches/presentation/home-matches-section-content';
-import { MatchesListSkeleton } from '@/modules/matches/presentation/matches-list-skeleton';
+import { HomePendingBetsSidebarContent } from '@/modules/bets/presentation/components/home-pending-bets-sidebar-content';
+import { PendingBetsPanelSkeleton } from '@/modules/bets/presentation/components/skeletons/pending-bets-panel-skeleton';
+import { HomeMatchesSectionContent } from '@/modules/matches/presentation/components/home-matches-section-content';
+import { MatchesListSkeleton } from '@/modules/matches/presentation/components/matches-list-skeleton';
 import { AppShell } from '@/shared/components/layout/app-shell';
 import { createPageMetadata } from '@/shared/lib/seo';
 import type { Metadata } from 'next';

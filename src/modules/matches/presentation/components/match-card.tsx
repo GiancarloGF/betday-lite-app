@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { BetPick } from '@/modules/bets/domain/bet';
-import { PlaceBetDialog } from '@/modules/bets/presentation/place-bet-dialog';
+import { PlaceBetDialog } from '@/modules/bets/presentation/components/dialogs/place-bet-dialog';
 import { cn } from '@/shared/lib/utils';
 
 const PICK_LABELS: Record<BetPick, string> = {

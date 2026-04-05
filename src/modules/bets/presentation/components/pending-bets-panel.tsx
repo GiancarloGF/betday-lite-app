@@ -1,29 +1,18 @@
-'use client';
-
-import { useMemo } from 'react';
 import Link from 'next/link';
 
-import type { Match } from '@/modules/matches/domain/match';
-import { useUserBetsStore } from '@/shared/stores/user-bets.store';
+import type { PendingBetSummary } from '@/modules/bets/domain/pending-bet-summary';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
-import { PendingBetItem } from '@/modules/bets/presentation/pending-bet-item';
+import { PendingBetItem } from '@/modules/bets/presentation/components/pending-bet-item';
 
 /**
  * Displays the list of pending user bets.
  */
-export function PendingBetsPanel({ matches }: { matches: Match[] }) {
-  const userBets = useUserBetsStore((state) => state.userBets);
-
-  const pendingBets = useMemo(() => {
-    return [...userBets]
-      .filter((bet) => bet.status === 'PENDING')
-      .sort(
-        (a, b) =>
-          new Date(b.placedAt).getTime() - new Date(a.placedAt).getTime(),
-      );
-  }, [userBets]);
-
+export function PendingBetsPanel({
+  pendingBets,
+}: {
+  pendingBets: PendingBetSummary[];
+}) {
   if (pendingBets.length === 0) {
     return (
       <Card className="rounded-[1.7rem] p-5">
@@ -46,11 +35,9 @@ export function PendingBetsPanel({ matches }: { matches: Match[] }) {
       </div>
 
       <div className="space-y-3">
-        {pendingBets.map((bet) => {
-          const match = matches.find((item) => item.id === bet.matchId);
-
-          return <PendingBetItem key={bet.id} bet={bet} match={match} />;
-        })}
+        {pendingBets.map((summary) => (
+          <PendingBetItem key={summary.id} summary={summary} />
+        ))}
       </div>
 
       <Button asChild variant="outline" className="w-full">

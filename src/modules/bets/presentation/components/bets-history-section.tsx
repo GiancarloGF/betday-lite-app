@@ -6,7 +6,7 @@ import { es } from 'date-fns/locale';
 import Link from 'next/link';
 
 import type { Bet, BetPick, BetStatus } from '@/modules/bets/domain/bet';
-import { BetsEmptyState } from '@/modules/bets/presentation/bets-empty-state';
+import { BetsEmptyState } from '@/modules/bets/presentation/components/bets-empty-state';
 import type { Match } from '@/modules/matches/domain/match';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
@@ -20,10 +20,9 @@ import {
   TableRow,
 } from '@/shared/components/ui/table';
 import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
-import { useUserBetsStore } from '@/shared/stores/user-bets.store';
 
 type BetsHistorySectionProps = {
-  seedBets: Bet[];
+  bets: Bet[];
   matches: Match[];
 };
 
@@ -70,21 +69,17 @@ function getStatusTabLabel(status: BetStatus | 'ALL'): string {
 /**
  * Manages client-side filtering and combines seed bets with user bets.
  */
-export function BetsHistorySection({
-  seedBets,
-  matches,
-}: BetsHistorySectionProps) {
-  const userBets = useUserBetsStore((state) => state.userBets);
+export function BetsHistorySection({ bets, matches }: BetsHistorySectionProps) {
   const [search, setSearch] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<BetStatus | 'ALL'>(
     'ALL',
   );
 
   const allBets = useMemo(() => {
-    return [...seedBets, ...userBets].sort(
+    return [...bets].sort(
       (a, b) => new Date(b.placedAt).getTime() - new Date(a.placedAt).getTime(),
     );
-  }, [seedBets, userBets]);
+  }, [bets]);
 
   const enrichedBets = useMemo<EnrichedBet[]>(() => {
     return allBets.map((bet) => ({
@@ -162,13 +157,13 @@ export function BetsHistorySection({
                 <TableHead className="rounded-tl-[1.6rem]">
                   Detalles del partido
                 </TableHead>
-                <TableHead>Seleccion</TableHead>
+                <TableHead>Selección</TableHead>
                 <TableHead>Cuota</TableHead>
                 <TableHead>Monto</TableHead>
                 <TableHead>Estado</TableHead>
                 <TableHead>Fecha/Hora</TableHead>
                 <TableHead className="rounded-tr-[1.6rem] text-right">
-                  Accion
+                  Acción
                 </TableHead>
               </TableRow>
             </TableHeader>

@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 import { ReactNode } from 'react';
 
 import { authOptions } from '@/modules/auth/infrastructure/auth.config';
-import { getBalanceAction } from '@/modules/wallet/presentation/get-balance.action';
+import { getBalanceAction } from '@/modules/wallet/presentation/actions/get-balance.action';
 import { AppHeader } from '../header/app-header';
 
 /**

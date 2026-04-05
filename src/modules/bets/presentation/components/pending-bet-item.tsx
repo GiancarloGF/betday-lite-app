@@ -1,12 +1,11 @@
 import { format, parseISO } from 'date-fns';
 
-import type { Bet, BetPick } from '@/modules/bets/domain/bet';
-import type { Match } from '@/modules/matches/domain/match';
+import type { BetPick } from '@/modules/bets/domain/bet';
+import type { PendingBetSummary } from '@/modules/bets/domain/pending-bet-summary';
 import { Badge } from '@/shared/components/ui/badge';
 
 type PendingBetItemProps = {
-  bet: Bet;
-  match?: Match;
+  summary: PendingBetSummary;
 };
 
 const PICK_LABELS: Record<BetPick, string> = {
@@ -18,7 +17,7 @@ const PICK_LABELS: Record<BetPick, string> = {
 /**
  * Displays a compact pending bet summary.
  */
-export function PendingBetItem({ bet, match }: PendingBetItemProps) {
+export function PendingBetItem({ summary }: PendingBetItemProps) {
   return (
     <article className="bg-surface relative overflow-hidden rounded-[1.35rem]">
       <div className="bg-brand absolute inset-y-0 left-0 w-1.5 rounded-r-full" />
@@ -27,12 +26,11 @@ export function PendingBetItem({ bet, match }: PendingBetItemProps) {
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="text-foreground truncate text-sm font-semibold">
-              {match?.homeTeam.name ?? 'Equipo local'} vs{' '}
-              {match?.awayTeam.name ?? 'Equipo visitante'}
+              {summary.homeTeamName} vs {summary.awayTeamName}
             </p>
 
             <p className="text-muted-foreground mt-1 text-xs">
-              {format(parseISO(bet.placedAt), 'dd/MM HH:mm')}
+              {format(parseISO(summary.placedAt), 'dd/MM HH:mm')}
             </p>
           </div>
 
@@ -45,7 +43,7 @@ export function PendingBetItem({ bet, match }: PendingBetItemProps) {
               Pick
             </p>
             <p className="text-foreground mt-1 font-semibold">
-              {PICK_LABELS[bet.pick]}
+              {PICK_LABELS[summary.pick]}
             </p>
           </div>
 
@@ -54,7 +52,7 @@ export function PendingBetItem({ bet, match }: PendingBetItemProps) {
               Odd
             </p>
             <p className="text-foreground mt-1 font-semibold">
-              {bet.odd.toFixed(2)}
+              {summary.odd.toFixed(2)}
             </p>
           </div>
 
@@ -63,7 +61,7 @@ export function PendingBetItem({ bet, match }: PendingBetItemProps) {
               Stake
             </p>
             <p className="text-foreground mt-1 font-semibold">
-              S/ {bet.stake.toFixed(2)}
+              S/ {summary.stake.toFixed(2)}
             </p>
           </div>
         </div>
