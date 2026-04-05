@@ -34,6 +34,36 @@ const PICK_LABELS: Record<BetPick, string> = {
 
 const QUICK_STAKES = [10, 20, 50];
 
+function getSelectedOdd(pick: BetPick, match: Match): number {
+  if (pick === 'HOME') return match.market.odds.home;
+  if (pick === 'DRAW') return match.market.odds.draw;
+  return match.market.odds.away;
+}
+
+function parseStake(stake: string): number {
+  if (stake.trim().length === 0) {
+    return 0;
+  }
+
+  return Number(stake);
+}
+
+function getEstimatedReturn(stake: number, selectedOdd: number): number {
+  if (!Number.isFinite(stake) || stake <= 0) {
+    return 0;
+  }
+
+  return stake * selectedOdd;
+}
+
+function getEstimatedProfit(stake: number, estimatedReturn: number): number {
+  if (!Number.isFinite(stake) || stake <= 0) {
+    return 0;
+  }
+
+  return estimatedReturn - stake;
+}
+
 /**
  * Handles stake input, estimated return and bet confirmation.
  */
@@ -53,26 +83,10 @@ export function PlaceBetDialog({
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
   const stakeErrorId = useId();
 
-  const selectedOdd = (() => {
-    if (pick === 'HOME') return match.market.odds.home;
-    if (pick === 'DRAW') return match.market.odds.draw;
-    return match.market.odds.away;
-  })();
-
-  const parsedStake = (() => {
-    if (stake.trim().length === 0) return 0;
-    return Number(stake);
-  })();
-
-  const estimatedReturn = (() => {
-    if (!Number.isFinite(parsedStake) || parsedStake <= 0) return 0;
-    return parsedStake * selectedOdd;
-  })();
-
-  const estimatedProfit = (() => {
-    if (!Number.isFinite(parsedStake) || parsedStake <= 0) return 0;
-    return estimatedReturn - parsedStake;
-  })();
+  const selectedOdd = getSelectedOdd(pick, match);
+  const parsedStake = parseStake(stake);
+  const estimatedReturn = getEstimatedReturn(parsedStake, selectedOdd);
+  const estimatedProfit = getEstimatedProfit(parsedStake, estimatedReturn);
 
   useEffect(() => {
     return () => {
