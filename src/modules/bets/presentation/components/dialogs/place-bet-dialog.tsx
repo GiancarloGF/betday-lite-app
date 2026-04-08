@@ -225,7 +225,7 @@ export function PlaceBetDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="sm:pace-y-5 space-y-2">
           <div className="bg-surface-muted rounded-[1.5rem] border border-white/70 p-4">
             <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.2em] uppercase">
               Partido
@@ -238,9 +238,9 @@ export function PlaceBetDialog({
             </p>
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-3">
-            <div className="bg-muted/45 rounded-[1.2rem] border border-white/70 px-4 py-3">
-              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+          <div className="grid grid-cols-3 gap-1 sm:gap-2">
+            <div className="bg-muted/45 rounded-[1.2rem] border border-white/70 px-2 py-2 sm:px-4 sm:py-3">
+              <p className="text-muted-foreground text-[10px] font-semibold tracking-[0.18em] uppercase sm:text-[12px]">
                 Selección
               </p>
               <p className="text-foreground mt-1 text-2xl font-black tracking-tight">
@@ -248,8 +248,8 @@ export function PlaceBetDialog({
               </p>
             </div>
 
-            <div className="bg-muted/45 rounded-[1.2rem] border border-white/70 px-4 py-3">
-              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+            <div className="bg-muted/45 rounded-[1.2rem] border border-white/70 px-2 py-2 sm:px-4 sm:py-3">
+              <p className="text-muted-foreground text-[10px] font-semibold tracking-[0.18em] uppercase sm:text-[12px]">
                 Cuota
               </p>
               <p className="text-foreground mt-1 text-2xl font-black tracking-tight">
@@ -257,8 +257,8 @@ export function PlaceBetDialog({
               </p>
             </div>
 
-            <div className="bg-muted/45 rounded-[1.2rem] border border-white/70 px-4 py-3">
-              <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+            <div className="bg-muted/45 rounded-[1.2rem] border border-white/70 px-2 py-2 sm:px-4 sm:py-3">
+              <p className="text-muted-foreground text-[10px] font-semibold tracking-[0.18em] uppercase sm:text-[12px]">
                 Saldo
               </p>
               <p className="text-foreground mt-1 text-xl font-black tracking-tight whitespace-nowrap tabular-nums">
